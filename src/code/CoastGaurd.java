@@ -7,6 +7,6 @@ public class CoastGaurd extends SearchProblem{
     }
 
     public static String solve(String grid, String strategy, Boolean visualise){
-        return "";
+        return " ";
     }
 }
