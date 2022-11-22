@@ -1,5 +1,5 @@
 package code;
 
 public interface Observer {
-    public void update();
+    public void update(CGNode node);
 }

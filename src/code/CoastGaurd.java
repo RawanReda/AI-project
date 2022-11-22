@@ -72,6 +72,12 @@ public class CoastGaurd extends GeneralSearchProblem {
 
         }
 
+    public static void notifyObservers(CGNode node){
+        for(int i=0; i< observers.size(); i++){
+              observers.get(i).update(node);
+        }
+    }
+
     public static void occupyPositions(String type, int count){
         int m= grid[0].length; // number of columns
         int n= grid.length; // number of rows
@@ -146,9 +152,80 @@ public class CoastGaurd extends GeneralSearchProblem {
         return " ";
     }
 
+    public Node GeneralSearch(CGNode initial_state, String [] operators , String strategy){
+        Queue queue = new Queue();
+        queue.add(initial_state);
+        while(!queue.isEmpty()){
+            CGNode Node = queue.remove();
+            if(!(Node.equals(initial_state))){
+                notifyObservers(Node);
+            }
+            if (Node.goalTest())
+                return Node;
+            else{
+                if (strategy.equals("DF")){
+                  queue = DFS(queue, Node, operators);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Queue DFS (Queue queue, CGNode node, String[] operators){
+        String perOperator = node.operator;
+        int iPosition = node.state.i;
+        int jPosition = node.state.j;
+
+        for(int i=0; i< operators.length; i++){
+            if(operators[i].equals("left")){
+              if(operators[i] != "right" && jPosition > 0){
+                  CGNode n1 = new CGNode(iPosition, jPosition-1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                          node.state.remaining_capacity,"left", node);
+                  queue.add(n1);
+              }
+            }
+            if(operators[i].equals("right")){
+                if(operators[i] != "left" && jPosition < grid[0].length-1){
+                    CGNode n1 = new CGNode(iPosition, jPosition+1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                            node.state.remaining_capacity,"right", node);
+                    queue.add(n1);
+                }
+            }
+            if(operators[i].equals("up")){
+                if(operators[i] != "down" && iPosition > 0){
+                    CGNode n1 = new CGNode(iPosition-1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                            node.state.remaining_capacity,"up", node);
+                    queue.add(n1);
+                }
+            }
+            if(operators[i].equals("down")){
+                if(operators[i] != "up" && iPosition < grid.length){
+                    CGNode n1 = new CGNode(iPosition+1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                            node.state.remaining_capacity,"down", node);
+                    queue.add(n1);
+                }
+            }
+            if(operators[i].equals("pickup")){
+                CGNode n1 = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                            node.state.remaining_capacity,"pickup", node);
+                queue.add(n1);
+
+            }
+            if(operators[i].equals("retrieve")){
+                CGNode n1 = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity,"retrieve", node);
+                queue.add(n1);
+
+            }
+        }
+        return queue;
+    }
+
 
 
     public static void main(String[] args){
         System.out.println(genGrid());
     }
+
+
 }

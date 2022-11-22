@@ -7,14 +7,14 @@ public class CGNode extends Node{
         int j;
         int remaining_passengers;
         int remaining_blackboxes;
-        int current_capacity; // Number of passengers currently on CG
+        int remaining_capacity; // Number of passengers currently on CG
 
         public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity){
             this.i=i;
             this.j=j;
             this.remaining_passengers = remaining_passengers;
             this.remaining_blackboxes = remaining_blackboxes;
-            this.current_capacity = current_capacity;
+            this.remaining_capacity = current_capacity;
         }
     }
 //    CGNode parent;
@@ -31,7 +31,7 @@ public class CGNode extends Node{
 
     public boolean goalTest (){
         return (this.state.remaining_passengers==0 && this.state.remaining_blackboxes ==0
-        && this.state.current_capacity == 0);
+        && this.state.remaining_capacity == 0);
     }
 
 
