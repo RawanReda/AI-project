@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class GeneralSearchProblem {
     
-    class Queue {
+    static class Queue {
         private ArrayList<CGNode> myArray = new ArrayList<CGNode>();
 
         public void add(CGNode n) {

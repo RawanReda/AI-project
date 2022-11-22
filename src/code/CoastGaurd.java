@@ -10,6 +10,7 @@ public class CoastGaurd extends GeneralSearchProblem {
     static int cg_j;
     static int capacity;
     static int total_passengers=0;
+    static int saved_passengers = 0;
     private static List<Ship> observers = new ArrayList<>();
 
 
@@ -56,21 +57,47 @@ public class CoastGaurd extends GeneralSearchProblem {
         return grid_string.toString();
     }
 
-    public static void printGrid(CGNode[][] grid){
+//    public static void printGrid(CGNode[][] grid){
+//
+//        System.out.println(grid.length+" "+ grid[0].length);
+//        for(int i=0; i<grid.length; i++){
+//            for(int j=0; j<grid[i].length; j++){
+//
+//                CGNode curr= grid[i][j];
+//                if(curr!=null){
+//                System.out.print(i+" "+j+" "+"   |   "); }
+//                else System.out.print(i+" "+j+" "+"empty" +"   |   ");
+//            }
+//            System.out.println();
+//            }
+//
+//        }
+    public static void printGrid(GridCell[][] grid, CGNode node){
+        cg_i = node.state.i;
+        cg_j = node.state.j;
 
         System.out.println(grid.length+" "+ grid[0].length);
         for(int i=0; i<grid.length; i++){
             for(int j=0; j<grid[i].length; j++){
 
-                CGNode curr= grid[i][j];
-                if(curr!=null){
-                System.out.print(i+" "+j+" "+"   |   "); }
-                else System.out.print(i+" "+j+" "+"empty" +"   |   ");
+                GridCell curr= grid[i][j];
+                if(curr!=null && curr instanceof Station){
+                    System.out.print(i+" "+j+"  "+ "ST     |  ");
+
+                }
+                else if(curr!=null && curr instanceof Ship){
+                    System.out.print(i+" "+j+" "+" D:" +((Ship) curr).deaths + "  P: " + ((Ship) curr).passengers + "   | " );
+
+                }
+                else if( i== cg_i && j==cg_j)
+                    System.out.print(i+" "+j+" "+"CG" +"   |   ");
+                else
+                    System.out.print(i+" "+j+" "+"empty" +"   |   ");
             }
             System.out.println();
-            }
-
         }
+
+    }
 
     public static void notifyObservers(CGNode node){
         for(int i=0; i< observers.size(); i++){
@@ -134,9 +161,9 @@ public class CoastGaurd extends GeneralSearchProblem {
         // Ships
         String [] ship_location = grid_info[4].split(",");
         for(int i=0; i<ship_location.length; i+=3){
-            int x = Integer.parseInt(station_location[i]);
-            int y = Integer.parseInt(station_location[i+1]);
-            int c = Integer.parseInt(station_location[i+2]);
+            int x = Integer.parseInt(ship_location[i]);
+            int y = Integer.parseInt(ship_location[i+1]);
+            int c = Integer.parseInt(ship_location[i+2]);
             total_passengers += c;
             Ship ship = new Ship(c,x,y);
             addObserver(ship);
@@ -144,21 +171,36 @@ public class CoastGaurd extends GeneralSearchProblem {
         }
 
         CGNode initial_state = new CGNode(cg_i, cg_j, total_passengers,
-                ship_location.length/3, 0, null, null  );
+                ship_location.length/3, capacity, null, null  );
+        printGrid((grid), initial_state);
+        String [] operators = {"left", "up", "right", "down", "retrieve", "pickup", "drop"};
+        CGNode goal;
         if (strategy.equals("DF")){
-
-
+            goal =GeneralSearch(initial_state, operators, "DF");
+            String result = "Remaining BB " + goal.state.remaining_blackboxes + "Remaining Pass " + goal.state.remaining_passengers;
+            System.out.println(result);
         }
-        return " ";
+
+
+        return "";
     }
 
-    public Node GeneralSearch(CGNode initial_state, String [] operators , String strategy){
+    public static CGNode GeneralSearch(CGNode initial_state, String [] operators , String strategy){
         Queue queue = new Queue();
         queue.add(initial_state);
         while(!queue.isEmpty()){
             CGNode Node = queue.remove();
             if(!(Node.equals(initial_state))){
+                System.out.println(Node.operator);
                 notifyObservers(Node);
+                System.out.println("i: " + Node.state.i + "j: "+ Node.state.j);
+                printGrid(grid, Node);
+            }
+            if(Node.operator !=null && Node.operator.equals("drop")){
+                int num_saved = capacity - Node.state.remaining_capacity;
+                saved_passengers += num_saved;
+                Node.state.remaining_capacity = 0;
+
             }
             if (Node.goalTest())
                 return Node;
@@ -172,59 +214,67 @@ public class CoastGaurd extends GeneralSearchProblem {
     }
 
     public static Queue DFS (Queue queue, CGNode node, String[] operators){
-        String perOperator = node.operator;
+        String pre_Operator = node.operator;
         int iPosition = node.state.i;
         int jPosition = node.state.j;
+        GridCell gridcell = grid[iPosition][jPosition];
 
-        for(int i=0; i< operators.length; i++){
-            if(operators[i].equals("left")){
-              if(operators[i] != "right" && jPosition > 0){
-                  CGNode n1 = new CGNode(iPosition, jPosition-1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                          node.state.remaining_capacity,"left", node);
-                  queue.add(n1);
-              }
-            }
-            if(operators[i].equals("right")){
-                if(operators[i] != "left" && jPosition < grid[0].length-1){
-                    CGNode n1 = new CGNode(iPosition, jPosition+1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                            node.state.remaining_capacity,"right", node);
-                    queue.add(n1);
-                }
-            }
-            if(operators[i].equals("up")){
-                if(operators[i] != "down" && iPosition > 0){
-                    CGNode n1 = new CGNode(iPosition-1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                            node.state.remaining_capacity,"up", node);
-                    queue.add(n1);
-                }
-            }
-            if(operators[i].equals("down")){
-                if(operators[i] != "up" && iPosition < grid.length){
-                    CGNode n1 = new CGNode(iPosition+1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                            node.state.remaining_capacity,"down", node);
-                    queue.add(n1);
-                }
-            }
-            if(operators[i].equals("pickup")){
-                CGNode n1 = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                            node.state.remaining_capacity,"pickup", node);
-                queue.add(n1);
+        if(jPosition > 0){
+              CGNode left = new CGNode(iPosition, jPosition-1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                      node.state.remaining_capacity,"left", node);
+              queue.add(left);
+          }
+        if(jPosition < grid[0].length-1){
+            CGNode right = new CGNode(iPosition, jPosition+1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,"right", node);
+            queue.add(right);
+        }
+        if(iPosition > 0){
+            CGNode up = new CGNode(iPosition-1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,"up", node);
+            queue.add(up);
+        }
 
-            }
-            if(operators[i].equals("retrieve")){
-                CGNode n1 = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity,"retrieve", node);
-                queue.add(n1);
+        if(iPosition < grid.length-1){
+            CGNode down = new CGNode(iPosition+1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,"down", node);
+            queue.add(down);
+        }
 
+
+
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) gridcell;
+            if(ship.passengers>0 && node.state.remaining_capacity !=0) {
+                CGNode pickup = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, "pickup", node);
+                queue.add(pickup);
             }
         }
+
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) gridcell;
+            if(ship.wrecked && !ship.done) {
+                CGNode retrieve = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, "retrieve", node);
+                queue.add(retrieve);
+            }
+        }
+        if (gridcell != null && gridcell instanceof Station && node.state.remaining_capacity>0) {
+            CGNode drop = new CGNode(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, "drop", node);
+            queue.add(drop);
+        }
+
         return queue;
     }
 
 
 
     public static void main(String[] args){
-        System.out.println(genGrid());
+        String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
+        solve(grid0, "DF", true);
+
     }
 
 
