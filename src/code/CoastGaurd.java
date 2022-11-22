@@ -1,9 +1,8 @@
 package code;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
-public class CoastGaurd extends GeneralSearchProblem{
+public class CoastGaurd extends GeneralSearchProblem {
     static StringBuilder grid_string;
     static GridCell [][] grid;
     static HashMap< Integer, HashSet<Integer>> locations_occupied;
@@ -11,7 +10,17 @@ public class CoastGaurd extends GeneralSearchProblem{
     static int cg_j;
     static int capacity;
     static int total_passengers=0;
+    private static List<Ship> observers = new ArrayList<>();
 
+
+
+    public static void addObserver(Ship ship) {
+        observers.add(ship);
+    }
+
+    public static void removeObserver(Ship ship) {
+        observers.remove(ship);
+    }
 
     public static String genGrid(){
         grid_string= new StringBuilder();
@@ -47,13 +56,13 @@ public class CoastGaurd extends GeneralSearchProblem{
         return grid_string.toString();
     }
 
-    public static void printGrid(Node[][] grid){
+    public static void printGrid(CGNode[][] grid){
 
         System.out.println(grid.length+" "+ grid[0].length);
         for(int i=0; i<grid.length; i++){
             for(int j=0; j<grid[i].length; j++){
 
-                Node curr= grid[i][j];
+                CGNode curr= grid[i][j];
                 if(curr!=null){
                 System.out.print(i+" "+j+" "+"   |   "); }
                 else System.out.print(i+" "+j+" "+"empty" +"   |   ");
@@ -108,6 +117,7 @@ public class CoastGaurd extends GeneralSearchProblem{
 
         grid = new GridCell [n][m];
 
+        // Stations
         String [] station_location = grid_info[3].split(",");
         for(int i=0; i<station_location.length; i+=2){
             int x = Integer.parseInt(station_location[i]);
@@ -115,6 +125,7 @@ public class CoastGaurd extends GeneralSearchProblem{
             Station station = new Station(x,y);
             grid[x][y] = station;
         }
+        // Ships
         String [] ship_location = grid_info[4].split(",");
         for(int i=0; i<ship_location.length; i+=3){
             int x = Integer.parseInt(station_location[i]);
@@ -122,12 +133,20 @@ public class CoastGaurd extends GeneralSearchProblem{
             int c = Integer.parseInt(station_location[i+2]);
             total_passengers += c;
             Ship ship = new Ship(c,x,y);
+            addObserver(ship);
             grid[x][y] = ship;
         }
-        Node initial_state = new Node(cg_i, cg_j, total_passengers,
+
+        CGNode initial_state = new CGNode(cg_i, cg_j, total_passengers,
                 ship_location.length/3, 0, null, null  );
+        if (strategy.equals("DF")){
+
+
+        }
         return " ";
     }
+
+
 
     public static void main(String[] args){
         System.out.println(genGrid());

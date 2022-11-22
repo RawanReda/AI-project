@@ -1,6 +1,6 @@
 package code;
 
-public class Ship extends GridCell {
+public class Ship extends GridCell implements Observer {
      int passengers;
      int black_box;
      int deaths;
@@ -15,7 +15,7 @@ public class Ship extends GridCell {
           this.wrecked = false;
      }
 
-     void update(){
+     public void update(){
 
      }
 }
