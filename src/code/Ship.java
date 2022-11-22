@@ -15,7 +15,7 @@ public class Ship extends GridCell {
           this.wrecked = false;
      }
 
-     void update(){
+     public void update(Node node) {
 
      }
 }

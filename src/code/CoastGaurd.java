@@ -6,7 +6,7 @@ import java.util.HashSet;
 public class CoastGaurd extends GeneralSearchProblem{
     static StringBuilder grid_string;
     static GridCell [][] grid;
-    static HashMap< Integer, HashSet<Integer>> locations_occupied;
+    static HashMap< Integer, HashSet<Integer>> locations_occupied; // i, j
     static int cg_i;
     static int cg_j;
     static int capacity;
