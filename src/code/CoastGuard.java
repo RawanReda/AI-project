@@ -1,19 +1,19 @@
 package code;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
-public class CoastGaurd extends GeneralSearchProblem {
+public class CoastGuard extends GeneralSearchProblem {
     static StringBuilder grid_string;
     static GridCell [][] grid;
     static HashMap< Integer, HashSet<Integer>> locations_occupied; // i, j
     static int cg_i;
     static int cg_j;
     static int capacity;
-    static int total_passengers=0;
-    static int saved_passengers = 0;
-    private static List<Ship> observers = new ArrayList<>();
+    static int total_passengers;
+    static int saved_passengers;
 
-    public static void addObserver(Ship ship) {
+    public static void addObserver(List<Ship> observers, Ship ship) {
         observers.add(ship);
     }
     public static String genGrid(){
@@ -77,7 +77,7 @@ public class CoastGaurd extends GeneralSearchProblem {
 
     }
 
-    public static void notifyObservers(Node node){
+    public static void notifyObservers(List<Ship> observers,Node node){
         for(int i=0; i< observers.size(); i++){
               observers.get(i).update(node);
         }
@@ -131,7 +131,10 @@ public class CoastGaurd extends GeneralSearchProblem {
     }
 
     public static String solve(String g, String strategy, Boolean visualise){
+        ArrayList<Ship> observers = new ArrayList<>();
         String [] grid_info = g.split(";");
+        total_passengers=0;
+        saved_passengers = 0;
         int m = Integer.parseInt(grid_info[0].split(",")[0]);
         int n = Integer.parseInt(grid_info[0].split(",")[1]);
         capacity = Integer.parseInt(grid_info[1]);
@@ -156,7 +159,7 @@ public class CoastGaurd extends GeneralSearchProblem {
             int c = Integer.parseInt(ship_location[i+2]);
             total_passengers += c;
             Ship ship = new Ship(c,x,y);
-            addObserver(ship);
+            addObserver(observers, ship);
             grid[x][y] = ship;
         }
 
@@ -164,19 +167,24 @@ public class CoastGaurd extends GeneralSearchProblem {
                 ship_location.length/3, capacity, 0, null, null  );
         printGrid((grid), initial_state);
         String [] operators = {"left", "up", "right", "down", "retrieve", "pickup", "drop"};
-        Node goal;
+
+        String res="";
+        Node goal=null;
         if (strategy.equals("DF")){
-            goal =GeneralSearch(initial_state, operators, "DF");
+            goal =GeneralSearch(initial_state, operators, "DF", observers);
             String result = "Remaining BB " + goal.state.remaining_blackboxes + "Remaining Pass " + goal.state.remaining_passengers;
             System.out.println(result);
+        }else if(strategy.equals("BF")){
+            res = BFS(grid ,initial_state ,capacity, total_passengers, observers);
         }
 
 
-        return "";
+        return res;
     }
 
-    public static Node GeneralSearch(Node initial_state, String [] operators , String strategy){
-        Queue queue = new Queue();
+    public static Node GeneralSearch(Node initial_state, String [] operators , String strategy, List<Ship> observers){
+
+        QueueLIFO queue = new QueueLIFO();
         ArrayList<Node> expanded = new ArrayList<Node>();
         queue.add(initial_state);
         while(!queue.isEmpty()){
@@ -190,7 +198,7 @@ public class CoastGaurd extends GeneralSearchProblem {
             System.out.println("# of Passengers on coast guard: "+ (capacity-Node.state.remaining_capacity));
             if(!(Node.equals(initial_state))){
                 System.out.println(Node.operator);
-                notifyObservers(Node);
+                notifyObservers(observers, Node);
                 System.out.println("i: " + Node.state.i + "j: "+ Node.state.j);
                 printGrid(grid, Node);
             }
@@ -222,7 +230,7 @@ public class CoastGaurd extends GeneralSearchProblem {
         return null;
     }
 
-    public static Queue DFS (Queue queue, Node node, String[] operators){
+    public static QueueLIFO DFS (QueueLIFO queue, Node node, String[] operators){
         String pre_Operator = node.operator;
         int iPosition = node.state.i;
         int jPosition = node.state.j;
