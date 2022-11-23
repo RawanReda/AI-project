@@ -1,9 +1,8 @@
 package code;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
-public class CoastGaurd extends GeneralSearchProblem{
+public class CoastGaurd extends GeneralSearchProblem {
     static StringBuilder grid_string;
     static GridCell [][] grid;
     static HashMap< Integer, HashSet<Integer>> locations_occupied; // i, j
@@ -11,8 +10,12 @@ public class CoastGaurd extends GeneralSearchProblem{
     static int cg_j;
     static int capacity;
     static int total_passengers=0;
+    static int saved_passengers = 0;
+    private static List<Ship> observers = new ArrayList<>();
 
-
+    public static void addObserver(Ship ship) {
+        observers.add(ship);
+    }
     public static String genGrid(){
         grid_string= new StringBuilder();
         locations_occupied= new HashMap<>();
@@ -47,21 +50,38 @@ public class CoastGaurd extends GeneralSearchProblem{
         return grid_string.toString();
     }
 
-    public static void printGrid(Node[][] grid){
+    public static void printGrid(GridCell[][] grid, Node node){
+        cg_i = node.state.i;
+        cg_j = node.state.j;
 
         System.out.println(grid.length+" "+ grid[0].length);
         for(int i=0; i<grid.length; i++){
             for(int j=0; j<grid[i].length; j++){
 
-                Node curr= grid[i][j];
-                if(curr!=null){
-                System.out.print(i+" "+j+" "+"   |   "); }
-                else System.out.print(i+" "+j+" "+"empty" +"   |   ");
+                GridCell curr= grid[i][j];
+                if(curr!=null && curr instanceof Station){
+                    System.out.print(i+" "+j+"  "+ "ST     |  ");
+
+                }
+                else if(curr!=null && curr instanceof Ship){
+                    System.out.print(i+" "+j+" "+" D:" +((Ship) curr).deaths + "  P: " + ((Ship) curr).passengers + "   | " );
+
+                }
+                else if( i== cg_i && j==cg_j)
+                    System.out.print(i+" "+j+" "+"CG" +"   |   ");
+                else
+                    System.out.print(i+" "+j+" "+"empty" +"   |   ");
             }
             System.out.println();
-            }
-
         }
+
+    }
+
+    public static void notifyObservers(Node node){
+        for(int i=0; i< observers.size(); i++){
+              observers.get(i).update(node);
+        }
+    }
 
     public static void occupyPositions(String type, int count){
         int m= grid[0].length; // number of columns
@@ -98,6 +118,18 @@ public class CoastGaurd extends GeneralSearchProblem{
 
     }
 
+    public static boolean isRedundantState(Node n1, ArrayList<Node> expanded){
+        if(expanded.isEmpty())
+            return false;
+        for( int i =0; i<expanded.size(); i++){
+            Node pre_node = expanded.get(i);
+            if (n1.state.i == pre_node.state.i && n1.state.j == pre_node.state.j && !n1.operator.equals("pickup") && !n1.operator.equals("retrieve") && !n1.operator.equals("drop")
+                    && n1.state.remaining_capacity == pre_node.state.remaining_capacity && n1.state.rescued_passengers == pre_node.state.rescued_passengers)
+                return true;
+        }
+        return false;
+    }
+
     public static String solve(String g, String strategy, Boolean visualise){
         String [] grid_info = g.split(";");
         int m = Integer.parseInt(grid_info[0].split(",")[0]);
@@ -108,6 +140,7 @@ public class CoastGaurd extends GeneralSearchProblem{
 
         grid = new GridCell [n][m];
 
+        // Stations
         String [] station_location = grid_info[3].split(",");
         for(int i=0; i<station_location.length; i+=2){
             int x = Integer.parseInt(station_location[i]);
@@ -115,21 +148,136 @@ public class CoastGaurd extends GeneralSearchProblem{
             Station station = new Station(x,y);
             grid[x][y] = station;
         }
+        // Ships
         String [] ship_location = grid_info[4].split(",");
         for(int i=0; i<ship_location.length; i+=3){
-            int x = Integer.parseInt(station_location[i]);
-            int y = Integer.parseInt(station_location[i+1]);
-            int c = Integer.parseInt(station_location[i+2]);
+            int x = Integer.parseInt(ship_location[i]);
+            int y = Integer.parseInt(ship_location[i+1]);
+            int c = Integer.parseInt(ship_location[i+2]);
             total_passengers += c;
             Ship ship = new Ship(c,x,y);
+            addObserver(ship);
             grid[x][y] = ship;
         }
+
         Node initial_state = new Node(cg_i, cg_j, total_passengers,
-                ship_location.length/3, 0, null, null  );
-        return " ";
+                ship_location.length/3, capacity, 0, null, null  );
+        printGrid((grid), initial_state);
+        String [] operators = {"left", "up", "right", "down", "retrieve", "pickup", "drop"};
+        Node goal;
+        if (strategy.equals("DF")){
+            goal =GeneralSearch(initial_state, operators, "DF");
+            String result = "Remaining BB " + goal.state.remaining_blackboxes + "Remaining Pass " + goal.state.remaining_passengers;
+            System.out.println(result);
+        }
+
+
+        return "";
+    }
+
+    public static Node GeneralSearch(Node initial_state, String [] operators , String strategy){
+        Queue queue = new Queue();
+        ArrayList<Node> expanded = new ArrayList<Node>();
+        queue.add(initial_state);
+        while(!queue.isEmpty()){
+            System.out.println("---------------------------------------------------");
+            Node Node = queue.remove();
+            if (isRedundantState(Node, expanded)){
+                continue;
+            }
+            expanded.add(Node);
+            System.out.println("Rescued People In Stations: "+ saved_passengers);
+            System.out.println("# of Passengers on coast guard: "+ (capacity-Node.state.remaining_capacity));
+            if(!(Node.equals(initial_state))){
+                System.out.println(Node.operator);
+                notifyObservers(Node);
+                System.out.println("i: " + Node.state.i + "j: "+ Node.state.j);
+                printGrid(grid, Node);
+            }
+            if(Node.operator !=null && Node.operator.equals("drop")){
+                int num_saved = capacity - Node.state.remaining_capacity;
+                saved_passengers += num_saved;
+                Node.state.remaining_passengers -= num_saved;
+                Node.state.remaining_capacity = capacity;
+
+            }
+            if (Node.goalTest(capacity)) {
+                int total_deaths = 0;
+                for (int i=0; i<observers.size(); i++){
+                    Ship ship = (Ship) observers.get(i);
+                    total_deaths += ship.deaths;
+                }
+                System.out.println("############### DONE ##################");
+                System.out.println("Number of people rescued: "+ Node.state.rescued_passengers);
+                System.out.println("Number of deaths: "+ total_deaths);
+                System.out.println("Number of expanded nodes (depth): "+ expanded.size());
+                return Node;
+            }
+            else{
+                if (strategy.equals("DF")){
+                  queue = DFS(queue, Node, operators);
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Queue DFS (Queue queue, Node node, String[] operators){
+        String pre_Operator = node.operator;
+        int iPosition = node.state.i;
+        int jPosition = node.state.j;
+        GridCell gridcell = grid[iPosition][jPosition];
+
+        if(jPosition > 0){
+              Node left = new Node(iPosition, jPosition-1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                      node.state.remaining_capacity,node.state.rescued_passengers,"left", node);
+              queue.add(left);
+          }
+        if(jPosition < grid[0].length-1){
+            Node right = new Node(iPosition, jPosition+1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,node.state.rescued_passengers, "right", node);
+            queue.add(right);
+        }
+        if(iPosition > 0){
+            Node up = new Node(iPosition-1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,node.state.rescued_passengers, "up", node);
+            queue.add(up);
+        }
+        if(iPosition < grid.length-1){
+            Node down = new Node(iPosition+1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity,node.state.rescued_passengers,"down", node);
+            queue.add(down);
+        }
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) gridcell;
+            if(ship.passengers>0 && node.state.remaining_capacity !=0) {
+                Node pickup = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node);
+                queue.add(pickup);
+            }
+        }
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) gridcell;
+            if(ship.wrecked && !ship.done) {
+                Node retrieve = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node);
+                queue.add(retrieve);
+            }
+        }
+        if (gridcell != null && gridcell instanceof Station && node.state.remaining_capacity<capacity) {
+            Node drop = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "drop", node);
+            queue.add(drop);
+        }
+
+        return queue;
     }
 
     public static void main(String[] args){
-        System.out.println(genGrid());
+        String grid0 = "6,6;52;2,0;2,4,4,0,5,4;2,1,19,4,2,6,5,0,8;";
+        solve(grid0, "DF", true);
+
     }
+
+
 }

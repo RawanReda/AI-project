@@ -1,9 +1,32 @@
 package code;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 //(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_space, String operator,  Node parent)
+import java.util.ArrayList;
+
 public class GeneralSearchProblem {
+
+    static class Queue {
+        private ArrayList<Node> myArray = new ArrayList<Node>();
+
+        public void add(Node n) {
+            myArray.add(0, n);
+        }
+        public Node remove() {
+            Node n = myArray.get(0);
+            myArray.remove(0);
+            return n;
+        }
+        public Integer size() {
+            return myArray.size();
+        }
+        public Boolean isEmpty() {
+            return myArray.size() == 0;
+        }
+    }
+
     // right, left, up, down
 
     public static void BFS(GridCell[][] grid ,Node cg,int capacity, int totalPassengers) {
