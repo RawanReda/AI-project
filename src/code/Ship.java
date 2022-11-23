@@ -20,7 +20,7 @@ public class Ship extends GridCell implements Observer {
           this.savedPassengers = 0;
      }
 
-     public void update(CGNode node){
+     public void update(Node node){
           if(!done) {
                if(node.operator.equals("pickup") && node.state.i == i && node.state.j == j){
 
@@ -29,12 +29,18 @@ public class Ship extends GridCell implements Observer {
                     this.passengers -= saved;
                     System.out.println("Remaining Passengers: "+ this.passengers);
                     node.state.remaining_capacity -= saved;
+                    node.state.rescued_passengers += saved;
                     if(this.passengers > 0)
                          this.deaths ++;
+                    if(passengers==0){
+                         this.wrecked = true;
+                    }
 
                }
                else if(node.operator.equals("retrieve") && node.state.i == i && node.state.j == j && passengers == 0){
+                    System.out.println("Black Box Retrieved ");
                     this.done = true;
+                    node.state.remaining_blackboxes--;
                }
                else if ( passengers > 0) {
                     node.state.remaining_passengers--;

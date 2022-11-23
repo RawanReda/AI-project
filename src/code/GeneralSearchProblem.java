@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class GeneralSearchProblem {
     
     static class Queue {
-        private ArrayList<CGNode> myArray = new ArrayList<CGNode>();
+        private ArrayList<Node> myArray = new ArrayList<Node>();
 
-        public void add(CGNode n) {
+        public void add(Node n) {
             myArray.add(0, n);
         }
-        public CGNode remove() {
-            CGNode n = myArray.get(0);
+        public Node remove() {
+            Node n = myArray.get(0);
             myArray.remove(0);
             return n;
         }
@@ -38,9 +38,7 @@ public class GeneralSearchProblem {
 //        return null;
 //    }
 
-    public static void DFS (Queue nodes, Node node, String [] Operators){
 
-    }
 
 
 }
