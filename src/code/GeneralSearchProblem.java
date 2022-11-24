@@ -71,6 +71,7 @@ System.out.println();
 
     public static String BFS(GridCell[][] grid ,Node cg,int capacity, int totalPassengers, ArrayList<Ship> observers) {
         Node pass_goal=null;
+        int count_nodes_expanded=0;
         Queue<Node> q = new LinkedList<>();
         ArrayList<Node> expanded = new ArrayList<Node>();
         q.add(cg);
@@ -80,7 +81,7 @@ System.out.println();
 
             if (isRedundantState(cg, expanded))
                 continue;
-
+            count_nodes_expanded++;
             printGrid(grid, cg);
             expanded.add(cg);
             if(cg.operator!=null)
@@ -91,7 +92,9 @@ System.out.println();
 
             if (cg.goalTest(capacity)) {
                 pass_goal= cg;
-                break;
+                String result= printPath(pass_goal)+";"+count_nodes_expanded; // number of deaths, number of retrieved boxes?
+                System.out.println("res returned "+result);
+                return result;
             }
 
             if (cg_i < grid.length - 1) {
@@ -150,5 +153,15 @@ System.out.println();
         return "";
     }
 
+
+    public static String printPath(Node cg){
+        StringBuilder path=new StringBuilder(cg.operator);
+        cg=cg.parent;
+        while(cg!=null){
+            path.insert(0,cg.operator+",");
+            cg= cg.parent;
+        }
+        return "";
+    }
     }
 
