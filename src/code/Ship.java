@@ -1,13 +1,24 @@
 package code;
 
 public class Ship extends GridCell implements Observer {
-     int passengers;
+     int passengers; // remaining passengers
      int black_box;
      int deaths;
      boolean wrecked;
 
      int savedPassengers;
      boolean done;
+
+     @Override
+     public Object clone() {
+               Ship new_ship= new Ship(this.passengers, this.i, this.j);
+               new_ship.black_box = this.black_box;
+               new_ship.done= this.done ;
+               new_ship.deaths = this.deaths;
+               new_ship.wrecked=this.wrecked;
+               new_ship.savedPassengers=savedPassengers;
+               return new_ship;
+     }
 
      public Ship(int passengers, int i, int j) {
           this.passengers = passengers;

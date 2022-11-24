@@ -1,5 +1,9 @@
 package code;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class Node {
 
     static class State{
@@ -8,27 +12,29 @@ public class Node {
         int remaining_passengers;
         int remaining_blackboxes;
         int remaining_capacity; // Number of passengers currently on CG
-
         int rescued_passengers;
+        HashMap<String, Ship> observers;
 
-
-        public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity, int rescued_passengers){
+        public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity, int rescued_passengers,  HashMap<String, Ship> s){
             this.i=i;
             this.j=j;
             this.remaining_passengers = remaining_passengers;
             this.remaining_blackboxes = remaining_blackboxes;
             this.remaining_capacity = current_capacity;
             this.rescued_passengers = rescued_passengers;
+            this.observers = s;
         }
     }
+
+
     Node parent;
     State state;     //  N1    N2    N3
     String operator; // left, right, up, down, pickup, retrieve, drop
 
     public Node(int i, int j, int remaining_passengers,
-                int remaining_blackboxes, int current_space, int rescued_passengers, String operator, Node parent){
+                int remaining_blackboxes, int current_space, int rescued_passengers, String operator, Node parent, HashMap<String,Ship> observers){
 
-        this.state= new State(i,j,remaining_passengers, remaining_blackboxes,current_space,rescued_passengers);
+        this.state= new State(i,j,remaining_passengers, remaining_blackboxes,current_space,rescued_passengers, observers);
         this.operator = operator;
         this.parent = parent;
     }
