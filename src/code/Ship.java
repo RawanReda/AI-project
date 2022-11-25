@@ -32,8 +32,8 @@ public class Ship extends GridCell implements Observer {
      }
 
      public void update(Node node){
-          System.out.println("ship crossed ");
-          System.out.println("operator: "+ node.operator+" i: "+node.state.i+" j: "+node.state.j);
+//          System.out.println("ship crossed ");
+//          System.out.println("operator: "+ node.operator+" i: "+node.state.i+" j: "+node.state.j);
 
           if(!done) {
                if(node.operator.equals("pickup") && node.state.i == i && node.state.j == j){
@@ -41,9 +41,10 @@ public class Ship extends GridCell implements Observer {
                     int saved = Math.min(passengers, node.state.remaining_capacity);
                     this.savedPassengers += saved;
                     this.passengers -= saved;
-                    System.out.println("ship Remaining Passengers: "+ this.passengers);
+//                    System.out.println("ship Remaining Passengers: "+ this.passengers);
                     node.state.remaining_capacity -= saved;
-                    node.state.rescued_passengers += saved;
+
+                  //  node.state.rescued_passengers += saved;
                     if(this.passengers > 0)
                          this.deaths ++;
                     if(passengers==0){
@@ -52,7 +53,7 @@ public class Ship extends GridCell implements Observer {
 
                }
                else if(node.operator.equals("retrieve") && node.state.i == i && node.state.j == j && passengers == 0){
-                    System.out.println("ship Black Box Retrieved ");
+//                    System.out.println("ship Black Box Retrieved ");
                     this.done = true;
                     node.state.remaining_blackboxes--;
                }
@@ -76,7 +77,7 @@ public class Ship extends GridCell implements Observer {
 
 
           }
-          System.out.println("ship crossed end ");
+//          System.out.println("ship crossed end ");
 
 
      }

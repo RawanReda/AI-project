@@ -13,9 +13,12 @@ public class Node {
         int remaining_blackboxes;
         int remaining_capacity; // Number of passengers currently on CG
         int rescued_passengers;
+        int retrieved_boxes;
+        int depth=0;
+        int deaths;
         HashMap<String, Ship> observers;
 
-        public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity, int rescued_passengers,  HashMap<String, Ship> s){
+        public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity, int rescued_passengers,  HashMap<String, Ship> s, int retrieved_boxes, int depth){
             this.i=i;
             this.j=j;
             this.remaining_passengers = remaining_passengers;
@@ -23,6 +26,9 @@ public class Node {
             this.remaining_capacity = current_capacity;
             this.rescued_passengers = rescued_passengers;
             this.observers = s;
+            this.retrieved_boxes=retrieved_boxes;
+            this.depth=depth;
+            this.deaths=0;
         }
     }
 
@@ -32,9 +38,9 @@ public class Node {
     String operator; // left, right, up, down, pickup, retrieve, drop
 
     public Node(int i, int j, int remaining_passengers,
-                int remaining_blackboxes, int current_space, int rescued_passengers, String operator, Node parent, HashMap<String,Ship> observers){
+                int remaining_blackboxes, int current_space, int rescued_passengers, String operator, Node parent, HashMap<String,Ship> observers,int retrieved_boxes, int depth ){
 
-        this.state= new State(i,j,remaining_passengers, remaining_blackboxes,current_space,rescued_passengers, observers);
+        this.state= new State(i,j,remaining_passengers, remaining_blackboxes,current_space,rescued_passengers, observers,retrieved_boxes,depth);
         this.operator = operator;
         this.parent = parent;
     }
