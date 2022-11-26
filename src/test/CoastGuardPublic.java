@@ -506,13 +506,13 @@ static class Checker{
 
 		
 		public Checker(byte m, byte n, byte x, byte x00, byte x01,  ArrayList<String> st, HashMap<String, Byte> sh) {
-			this.a=m;
-			this.b=n;
-			this.xc=x;
-			this.x00=x00;
-			this.x01=x01;
-			this.is=st;
-			this.ss=sh;
+			this.a=m; // m
+			this.b=n; //n
+			this.xc=x; // capacity
+			this.x00=x00; //cg i
+			this.x01=x01; // cg j
+			this.is=st; // stations
+			this.ss=sh; // ships
 			
 		}
 		
@@ -581,7 +581,8 @@ static class Checker{
 			ArrayList<String> toclean = new ArrayList<String>();
 			for (String k : ss.keySet()) {
 				byte v = ss.get(k);
-				if (v<=(byte)-1 && v>=(byte)-20) v++;else {
+				if (v<=(byte)-1 && v>=(byte)-20) v++;// -20   -1
+				else {
 					if (v==1) {v=(byte)-20;d++;}
 					else {
 					if 
@@ -607,6 +608,10 @@ static class Checker{
 		}
 
 		public boolean cool() {
+
+			System.out.println("ss ships size "+ (ss.size()==0));
+			System.out.println("cp check "+ (cp==0));
+
 			return ss.size()== 0 && cp == 0 ;
 		}
 		
@@ -632,22 +637,22 @@ static class Checker{
 		byte m = Byte.parseByte(dimensions[0]);
 		byte n = Byte.parseByte(dimensions[1]);
 		
-		byte x = Byte.parseByte(gridArray[1]);
+		byte x = Byte.parseByte(gridArray[1]); // cg capacity
 		
 		String[] xx = gridArray[2].split(",");
-		byte x00 = Byte.parseByte(xx[0]);
-		byte x01 = Byte.parseByte(xx[1]);
+		byte x00 = Byte.parseByte(xx[0]); // cg i
+		byte x01 = Byte.parseByte(xx[1]); // cg j
 
 		String[] st = gridArray[3].split(",");
 		ArrayList<String> xyz = new ArrayList<String>();
 		for(int i = 0;i< st.length -1; i+=2) {
-			xyz.add(st[i]+","+st[i+1]);
+			xyz.add(st[i]+","+st[i+1]); // stations
 		}
 		
 		String[] sh = gridArray[4].split(",");
 		HashMap<String, Byte> m4 = new HashMap<String, Byte>();
 		for(int i = 0;i< sh.length -1; i+=3) {
-			m4.put(sh[i]+","+sh[i+1],Byte.parseByte(sh[i+2]));
+			m4.put(sh[i]+","+sh[i+1],Byte.parseByte(sh[i+2])); //ships
 		}
 
 

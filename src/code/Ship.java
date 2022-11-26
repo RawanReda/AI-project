@@ -8,7 +8,7 @@ public class Ship extends GridCell implements Observer {
 
      int savedPassengers;
      boolean done;
-
+     int expiry_date=20;
      @Override
      public Object clone() {
                Ship new_ship= new Ship(this.passengers, this.i, this.j);
@@ -36,8 +36,7 @@ public class Ship extends GridCell implements Observer {
 //          System.out.println("operator: "+ node.operator+" i: "+node.state.i+" j: "+node.state.j);
 
           if(!done) {
-               if(node.operator.equals("pickup") && node.state.i == i && node.state.j == j){
-
+               if(!wrecked && node.operator.equals("pickup") && node.state.i == i && node.state.j == j){
                     int saved = Math.min(passengers, node.state.remaining_capacity);
                     this.savedPassengers += saved;
                     this.passengers -= saved;
@@ -45,30 +44,37 @@ public class Ship extends GridCell implements Observer {
                     node.state.remaining_capacity -= saved;
 
                   //  node.state.rescued_passengers += saved;
-                    if(this.passengers > 0)
-                         this.deaths ++;
+                    if(this.passengers > 0){
+                         this.passengers--;
+                         node.state.remaining_passengers--;
+                         this.deaths ++;}
                     if(passengers==0){
                          this.wrecked = true;
                     }
 
                }
-               else if(node.operator.equals("retrieve") && node.state.i == i && node.state.j == j && passengers == 0){
+               else if(node.operator.equals("retrieve") && node.state.i == i && node.state.j == j && wrecked && black_box<expiry_date){
 //                    System.out.println("ship Black Box Retrieved ");
                     this.done = true;
                     node.state.remaining_blackboxes--;
+                    node.state.retrieved_boxes++;
                }
                else if ( passengers > 0) {
                     node.state.remaining_passengers--;
-                    this.passengers -=1;
+                    this.passengers--;
                     this.deaths++;
+                    if (passengers == 0) {
+                         this.wrecked = true;
+                    }
+
                }
                else if(wrecked){
-                    if(black_box == 100){
-                         node.state.remaining_blackboxes--;
-                         this.done = true;
-                    }
-                    else {
+                    if(black_box < expiry_date){
                          black_box++;
+                         if(black_box==expiry_date) {
+                              node.state.remaining_blackboxes--;
+                              this.done = true;
+                         }
                     }
                }
                else if (passengers == 0) {
@@ -77,8 +83,5 @@ public class Ship extends GridCell implements Observer {
 
 
           }
-//          System.out.println("ship crossed end ");
-
-
      }
 }

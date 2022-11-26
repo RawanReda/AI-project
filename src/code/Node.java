@@ -14,7 +14,7 @@ public class Node {
         int remaining_capacity; // Number of passengers currently on CG
         int rescued_passengers;
         int retrieved_boxes;
-        int depth=0;
+        int depth;
         int deaths;
         HashMap<String, Ship> observers;
 

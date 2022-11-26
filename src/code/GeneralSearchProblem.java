@@ -144,11 +144,11 @@ public static void printNode(Node cg){
                             cg.state.remaining_passengers, cg.state.remaining_blackboxes,
                             cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
 
-                } else if (ship.wrecked && ship.black_box <100 && !ship.done) {
+                } else if (ship.wrecked  && !ship.done) {
 
                     q.add(new Node(cg_i, cg_j,
                             cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                            cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes+1, cg.state.depth+1));
+                            cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
                 }
 
             }
@@ -197,6 +197,10 @@ public static void printNode(Node cg){
             if (cg.goalTest(capacity)) {
                 pass_goal = cg;
                 String result = printPath(pass_goal) + ";" + cg.state.deaths+ ";" +cg.state.retrieved_boxes+";"+ count_nodes_expanded; // number of deaths, number of retrieved boxes?
+                
+                for(String x: cg.state.observers.keySet()){
+                    System.out.println(cg.state.observers.get(x)+"    kk  "+cg.state.observers.get(x).done );
+                }
                 System.out.println("res returned " + result);
                 return result;
             }

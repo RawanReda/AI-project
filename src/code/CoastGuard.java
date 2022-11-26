@@ -196,13 +196,13 @@ public class CoastGuard extends GeneralSearchProblem {
                 continue;
             }
             expanded.add(Node);
-            System.out.println("Rescued People In Stations: " + saved_passengers);
-            System.out.println("# of Passengers on coast guard: " + (capacity - Node.state.remaining_capacity));
+//            System.out.println("Rescued People In Stations: " + saved_passengers);
+//            System.out.println("# of Passengers on coast guard: " + (capacity - Node.state.remaining_capacity));
             if (!(Node.equals(initial_state))) {
-                System.out.println(Node.operator);
+//                System.out.println(Node.operator);
                 Node.state.observers = notifyObservers(Node.state.observers,Node);
-                System.out.println("i: " + Node.state.i + "j: " + Node.state.j);
-                printGrid(grid, Node);
+//                System.out.println("i: " + Node.state.i + "j: " + Node.state.j);
+//                printGrid(grid, Node);
             }
             if (Node.operator != null && Node.operator.equals("drop")) {
                 int num_saved = capacity - Node.state.remaining_capacity;
@@ -241,30 +241,30 @@ public class CoastGuard extends GeneralSearchProblem {
 //            Ship s= node.state.observers.get(k);
 //            System.out.println("ship "+k+": "+s.deaths);
 //        }
-
-        if (jPosition > 0) {
+printNode(node);
+        if (jPosition > 0) { // left
             Node left = new Node(iPosition, jPosition - 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
                     node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(left);
         }
-        if (jPosition < grid[0].length - 1) {
+        if (jPosition < grid[0].length - 1) { // right
             Node right = new Node(iPosition, jPosition + 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
                     node.state.remaining_capacity, node.state.rescued_passengers, "right", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(right);
         }
-        if (iPosition > 0) {
+        if (iPosition > 0) { //up
             Node up = new Node(iPosition - 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
                     node.state.remaining_capacity, node.state.rescued_passengers, "up", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(up);
         }
-        if (iPosition < grid.length - 1) {
+        if (iPosition < grid.length - 1) { //down
             Node down = new Node(iPosition + 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
                     node.state.remaining_capacity, node.state.rescued_passengers, "down", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(down);
         }
         if (gridcell != null && gridcell instanceof Ship) {
             Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
-            if (ship.passengers > 0 && node.state.remaining_capacity != 0) {
+            if (ship.passengers > 0 && node.state.remaining_capacity > 0) {
                 Node pickup = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
                         node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
                 queue.add(pickup);
@@ -272,9 +272,9 @@ public class CoastGuard extends GeneralSearchProblem {
         }
         if (gridcell != null && gridcell instanceof Ship) {
             Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
-            if (ship.wrecked && !ship.done) {
+            if (ship.wrecked && ship.black_box <20 && !ship.done) {
                 Node retrieve = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes+1, node.state.depth+1);
+                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
                 queue.add(retrieve);
             }
         }
