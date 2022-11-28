@@ -32,15 +32,11 @@ public class Ship extends GridCell implements Observer {
      }
 
      public void update(Node node){
-//          System.out.println("ship crossed ");
-//          System.out.println("operator: "+ node.operator+" i: "+node.state.i+" j: "+node.state.j);
-
           if(!done) {
                if(!wrecked && node.operator.equals("pickup") && node.state.i == i && node.state.j == j){
                     int saved = Math.min(passengers, node.state.remaining_capacity);
                     this.savedPassengers += saved;
                     this.passengers -= saved;
-//                    System.out.println("ship Remaining Passengers: "+ this.passengers);
                     node.state.remaining_capacity -= saved;
 
                   //  node.state.rescued_passengers += saved;

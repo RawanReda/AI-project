@@ -165,26 +165,25 @@ public class CoastGuard extends GeneralSearchProblem {
         Node initial_state = new Node(cg_i, cg_j, total_passengers,
                 ship_location.length / 3, capacity, 0, null, null, observers,0, 0);
         printGrid((grid), initial_state);
-        String[] operators = {"left", "up", "right", "down", "retrieve", "pickup", "drop"};
-
         String res = "";
         Node goal = null;
         if (strategy.equals("DF")) {
-            goal = GeneralSearch(initial_state, operators, "DF", observers);
-            String result = "Remaining BB " + goal.state.remaining_blackboxes + "Remaining Pass " + goal.state.remaining_passengers;
-            int deaths= total_passengers-goal.state.rescued_passengers;
-            res = printPath(goal) + ";" + goal.state.deaths + ";" +goal.state.retrieved_boxes+";"+ goal.state.depth; // number of deaths, number of retrieved boxes?
+            goal = GeneralSearch(initial_state, "DF", observers);
+            res = printPath(goal) + ";" + goal.state.deaths + ";" +goal.state.retrieved_boxes+";"+ goal.state.depth;
 
             System.out.println("result for DFS "+res);
         } else if (strategy.equals("BF")) {
             res = BFS(grid, initial_state, capacity, total_passengers);
+        }
+        else if (strategy.equals("ID")){
+            res = IDS(grid, initial_state, capacity, total_passengers);
         }
 
 
         return res;
     }
 
-    public static Node GeneralSearch(Node initial_state, String[] operators, String strategy, HashMap<String, Ship> observers) {
+    public static Node GeneralSearch(Node initial_state,  String strategy, HashMap<String, Ship> observers) {
 
         QueueLIFO queue = new QueueLIFO();
         ArrayList<Node> expanded = new ArrayList<Node>();
@@ -192,17 +191,12 @@ public class CoastGuard extends GeneralSearchProblem {
         while (!queue.isEmpty()) {
             System.out.println("---------------------------------------------------");
             Node Node = queue.remove();
-            if (isRedundantState(Node, expanded)) {
+            if (isRedundantState(Node, expanded) && queue.size()>1) {
                 continue;
             }
             expanded.add(Node);
-//            System.out.println("Rescued People In Stations: " + saved_passengers);
-//            System.out.println("# of Passengers on coast guard: " + (capacity - Node.state.remaining_capacity));
             if (!(Node.equals(initial_state))) {
-//                System.out.println(Node.operator);
                 Node.state.observers = notifyObservers(Node.state.observers,Node);
-//                System.out.println("i: " + Node.state.i + "j: " + Node.state.j);
-//                printGrid(grid, Node);
             }
             if (Node.operator != null && Node.operator.equals("drop")) {
                 int num_saved = capacity - Node.state.remaining_capacity;
@@ -212,84 +206,24 @@ public class CoastGuard extends GeneralSearchProblem {
 
             }
             if (Node.goalTest(capacity)) {
-                int total_deaths = 0;
-//                for (int i = 0; i < observers.size(); i++) {
-//                    Ship ship = (Ship) observers.get(i);
-//                    total_deaths += ship.deaths;
-//                }
                 System.out.println("############### DONE ##################");
                 System.out.println("Number of people rescued: " + Node.state.rescued_passengers);
-                System.out.println("Number of deaths: " + total_deaths);
+                System.out.println("Number of deaths: " + Node.state.deaths);
                 System.out.println("Number of expanded nodes (depth): " + expanded.size());
                 return Node;
             } else {
                 if (strategy.equals("DF")) {
-                    queue = DFS(queue, Node, operators);
+                    queue = DFS(grid, queue, Node, capacity);
                 }
             }
         }
         return null;
     }
-    public static QueueLIFO DFS(QueueLIFO queue, Node node, String[] operators) {
-        String pre_Operator = node.operator;
-        int iPosition = node.state.i;
-        int jPosition = node.state.j;
-        GridCell gridcell = grid[iPosition][jPosition];
 
-
-//        for(int k=0; k<node.state.observers.size(); k++){
-//            Ship s= node.state.observers.get(k);
-//            System.out.println("ship "+k+": "+s.deaths);
-//        }
-printNode(node);
-        if (jPosition > 0) { // left
-            Node left = new Node(iPosition, jPosition - 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-            queue.add(left);
-        }
-        if (jPosition < grid[0].length - 1) { // right
-            Node right = new Node(iPosition, jPosition + 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "right", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-            queue.add(right);
-        }
-        if (iPosition > 0) { //up
-            Node up = new Node(iPosition - 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "up", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-            queue.add(up);
-        }
-        if (iPosition < grid.length - 1) { //down
-            Node down = new Node(iPosition + 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "down", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-            queue.add(down);
-        }
-        if (gridcell != null && gridcell instanceof Ship) {
-            Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
-            if (ship.passengers > 0 && node.state.remaining_capacity > 0) {
-                Node pickup = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-                queue.add(pickup);
-            }
-        }
-        if (gridcell != null && gridcell instanceof Ship) {
-            Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
-            if (ship.wrecked && ship.black_box <20 && !ship.done) {
-                Node retrieve = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-                queue.add(retrieve);
-            }
-        }
-        if (gridcell != null && gridcell instanceof Station && node.state.remaining_capacity < capacity) {
-            Node drop = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "drop", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
-            queue.add(drop);
-        }
-
-        return queue;
-    }
 
     public static void main(String[] args) {
         String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
-        solve(grid0, "DF", true);
+        solve(grid0, "ID", false);
 
     }
 

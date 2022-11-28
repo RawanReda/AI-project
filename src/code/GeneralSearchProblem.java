@@ -33,15 +33,10 @@ public class GeneralSearchProblem {
 
 
         for (String position: observers.keySet()) {
-
-          //  if(observers.get(i).deaths==0)
-          //  System.out.println("ship notified deaths before :"+observers.get(i).passengers);
             Ship ship = (Ship) observers.get(position).clone();
             ship.update(node);
             ships_list.put(ship.i+","+ship.j, ship);
             node.state.deaths+= ship.deaths;
-          //  if(observers.get(i).deaths==0)
-          //  System.out.println("ship notified deaths after :"+ship.passengers);
 
         }
         return ships_list;
@@ -77,16 +72,14 @@ public class GeneralSearchProblem {
             return false;
         for (int i = 0; i < expanded.size(); i++) {
             Node pre_node = expanded.get(i);
-//            if (n1.state.i == pre_node.state.i && n1.state.j == pre_node.state.j  && n1.operator.equals("retrieve") && pre_node.operator.equals("retrieve") ){
-//                System.out.println("retrieve redundant"+n1.state.i+" "+n1.state.j);
-//                            return true;}
             if (n1.state.i == pre_node.state.i && n1.state.j == pre_node.state.j && !n1.operator.equals("pickup") && !n1.operator.equals("retrieve") && !n1.operator.equals("drop")
                     && n1.state.remaining_capacity == pre_node.state.remaining_capacity && n1.state.rescued_passengers == pre_node.state.rescued_passengers && n1.state.remaining_blackboxes==pre_node.state.remaining_blackboxes)
                 return true;
                   }
         return false;
     }
-public static void printNode(Node cg){
+
+    public static void printNode(Node cg){
         System.out.println("i,j :"+cg.state.i+" "+cg.state.j);
         System.out.println("operator: "+cg.operator);
         System.out.println("parent i,j and operator: "+ ((cg.parent!=null)?cg.parent.state.i + " "+cg.parent.state.j+" ,"+cg.parent.operator: "no parent"));
@@ -98,7 +91,7 @@ public static void printNode(Node cg){
         System.out.println("depth: "+cg.state.depth);
         System.out.println("number of ships: "+cg.state.observers.size());
 }
-    // right, left, up, down
+
     public static int checkSaved(Node node, int full_capacity) {
         if (node.operator!=null && node.operator.equals("drop")) {
             return full_capacity - node.state.remaining_capacity;
@@ -174,7 +167,6 @@ public static void printNode(Node cg){
 
         while (!q.isEmpty()) {
             cg = q.poll();
-          //  System.out.println("hello");
 
             if (isRedundantState(cg, expanded)) {
 
@@ -208,11 +200,105 @@ public static void printNode(Node cg){
             expand(grid, cg,q,capacity);
 
             }
-
-
         return "There is no goal state";
     }
 
+    public static String IDS(GridCell[][] grid, Node initial_state, int capacity, int totalPassengers){
+        int total_expanded_nodes=0;
+        for (int i=0; i<Integer.MAX_VALUE; i++) {
+            String result="";
+            System.out.println("----------------------------------------");
+            System.out.println("Restarting: New Max Depth: " +i);
+            ArrayList<Node> expanded = new ArrayList<Node>();
+            QueueLIFO q = new QueueLIFO();
+            int retrieved_blackboxes = 0;
+            q.add(initial_state);
+
+            while (!q.isEmpty()) {
+                Node node = q.remove();
+                if (node.operator!=null && isRedundantState(node, expanded)) {
+                    System.out.println("Redundant State: i,j: "+ node.state.i +" " + node.state.j + "operator: " + node.operator);
+                    continue;
+                }
+                expanded.add(node);
+                total_expanded_nodes++;
+//                printNode(node);
+                if (node.operator != null) {
+                    node.state.observers = notifyObservers(node.state.observers, node);
+                    if (node.operator.equals("retrieve")) retrieved_blackboxes++;
+                    if (node.operator.equals("drop")) {
+                        int num_saved = capacity - node.state.remaining_capacity;
+                        node.state.remaining_passengers -= num_saved;
+                        node.state.remaining_capacity = capacity;
+                        node.state.rescued_passengers+=num_saved;
+
+                    }
+                }
+
+                if (node.goalTest(capacity)) {
+                    result = printPath(node) + ";" + node.state.deaths + ";" + node.state.retrieved_boxes + ";" + total_expanded_nodes;
+                    return result;
+                }
+                if(node.state.depth <i)
+                    q = DFS(grid, q, node, capacity);
+
+            }
+            if(!result.equals(""))
+                return result;
+        }
+        return "There is no goal state";
+    }
+
+    public static QueueLIFO DFS(GridCell[][] grid, QueueLIFO queue, Node node, int capacity) {
+        int iPosition = node.state.i;
+        int jPosition = node.state.j;
+        GridCell gridcell = grid[iPosition][jPosition];
+
+        printNode(node);
+        if (jPosition > 0) { // left
+            Node left = new Node(iPosition, jPosition - 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+            queue.add(left);
+        }
+        if (jPosition < grid[0].length - 1) { // right
+            Node right = new Node(iPosition, jPosition + 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "right", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+            queue.add(right);
+        }
+        if (iPosition > 0) { //up
+            Node up = new Node(iPosition - 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "up", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+            queue.add(up);
+        }
+        if (iPosition < grid.length - 1) { //down
+            Node down = new Node(iPosition + 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "down", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+            queue.add(down);
+        }
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
+            if (ship.passengers > 0 && node.state.remaining_capacity > 0) {
+                Node pickup = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+                queue.add(pickup);
+            }
+        }
+        if (gridcell != null && gridcell instanceof Ship) {
+            Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
+            if (ship.wrecked && ship.black_box <20 && !ship.done) {
+                Node retrieve = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+                queue.add(retrieve);
+            }
+        }
+        if (gridcell != null && gridcell instanceof Station && node.state.remaining_capacity < capacity) {
+            Node drop = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
+                    node.state.remaining_capacity, node.state.rescued_passengers, "drop", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
+            queue.add(drop);
+        }
+
+        return queue;
+    }
 
     public static String printPath(Node cg) {
         StringBuilder path = new StringBuilder(cg.operator);
