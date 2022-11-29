@@ -163,7 +163,7 @@ public class CoastGuard extends GeneralSearchProblem {
         }
 
         Node initial_state = new Node(cg_i, cg_j, total_passengers,
-                ship_location.length / 3, capacity, 0, null, null, observers,0, 0);
+                ship_location.length / 3, capacity, 0, null, null, observers,0, 0, Integer.MAX_VALUE);
         printGrid((grid), initial_state);
         String res = "";
         Node goal = null;
@@ -177,6 +177,9 @@ public class CoastGuard extends GeneralSearchProblem {
         }
         else if (strategy.equals("ID")){
             res = IDS(grid, initial_state, capacity, total_passengers);
+        }
+        else if (strategy.equals("GR2")){
+            res = GR2(grid, initial_state, capacity);
         }
 
 
@@ -222,8 +225,8 @@ public class CoastGuard extends GeneralSearchProblem {
 
 
     public static void main(String[] args) {
-        String grid0 = "5,6;50;0,1;0,4,3,3;1,1,90;";
-        solve(grid0, "ID", false);
+        String grid0 = "7,5;100;3,4;2,6,3,5;0,0,4,0,1,8,1,4,77,1,5,1,3,2,94,4,3,46;";
+        solve(grid0, "GR2", false);
 
     }
 
