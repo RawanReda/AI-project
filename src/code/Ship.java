@@ -22,7 +22,7 @@ public class Ship extends GridCell implements Observer {
 
      public Ship(int passengers, int i, int j) {
           this.passengers = passengers;
-          this.black_box = 0;
+          //this.black_box = 0;
           this.done = false;
           super.i = i;
           super.j = j;
@@ -66,7 +66,7 @@ public class Ship extends GridCell implements Observer {
                }
                else if(wrecked){
                     if(black_box < expiry_date){
-                         black_box++;
+                         this.black_box++;
                          if(black_box==expiry_date) {
                               node.state.remaining_blackboxes--;
                               this.done = true;

@@ -3,7 +3,7 @@ package code;
 import java.util.*;
 
 public class GeneralSearchProblem {
-
+static String final_visualized_path="";
     static class QueueLIFO {
         private ArrayList<Node> myArray = new ArrayList<Node>();
 
@@ -40,30 +40,6 @@ public class GeneralSearchProblem {
         return ships_list;
     }
 
-    public static void printGrid(GridCell[][] grid, Node node) {
-        int cg_i = node.state.i;
-        int cg_j = node.state.j;
-        System.out.println("operator: " + node.operator);
-        System.out.println(grid.length + " " + grid[0].length);
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-
-                GridCell curr = grid[i][j];
-                if (curr != null && curr instanceof Station) {
-                    System.out.print(i + " " + j + "  " + "ST     |  ");
-
-                } else if (curr != null && curr instanceof Ship) {
-                    System.out.print(i + " " + j + " " + " D:" + ((Ship) curr).deaths + "  P: " + ((Ship) curr).passengers + "   | ");
-
-                } else if (i == cg_i && j == cg_j)
-                    System.out.print(i + " " + j + " " + "CG" + "   |   ");
-                else
-                    System.out.print(i + " " + j + " " + "empty" + "   |   ");
-            }
-            System.out.println();
-        }
-        System.out.println("......................................................................");
-    }
 
     public static boolean isRedundantState(Node n1, ArrayList<Node> expanded) {
         if (expanded.isEmpty())
@@ -77,27 +53,48 @@ public class GeneralSearchProblem {
         return false;
     }
 
-    public static void printNode(Node cg){
-        System.out.println("i,j :"+cg.state.i+" "+cg.state.j);
-        System.out.println("operator: "+cg.operator);
-        System.out.println("parent i,j and operator: "+ ((cg.parent!=null)?cg.parent.state.i + " "+cg.parent.state.j+" ,"+cg.parent.operator: "no parent"));
-        System.out.println("remaining capacity: "+cg.state.remaining_capacity);
-        System.out.println("remaining blackboxes: "+cg.state.remaining_blackboxes);
-        System.out.println("remaining passengers: "+cg.state.remaining_passengers);
-        System.out.println("rescued passengers: "+cg.state.rescued_passengers);
-        System.out.println("retrieved boxes: "+cg.state.retrieved_boxes);
-        System.out.println("depth: "+cg.state.depth);
-        System.out.println("number of ships: "+cg.state.observers.size());
+    public static String printNode(Node cg){
+
+        StringBuilder node_info=new StringBuilder();
+        node_info.append("i,j :"+cg.state.i+" "+cg.state.j+'\n');
+        if(cg.operator!=null)
+        node_info.append("operator: "+cg.operator+'\n');
+        node_info.append("parent i,j and operator: "+ ((cg.parent!=null)?cg.parent.state.i + " "+cg.parent.state.j+" ,"+cg.parent.operator: "no parent")+'\n');
+        node_info.append("remaining capacity: "+cg.state.remaining_capacity+'\n');
+        node_info.append("remaining blackboxes: "+cg.state.remaining_blackboxes+'\n');
+        node_info.append("remaining passengers: "+cg.state.remaining_passengers+'\n');
+        node_info.append("rescued passengers: "+cg.state.rescued_passengers+'\n');
+        node_info.append("retrieved boxes: "+cg.state.retrieved_boxes+'\n');
+        node_info.append("depth: "+cg.state.depth+'\n');
+        node_info.append("number of ships: "+cg.state.observers.size()+'\n');
+        node_info.append("cost: "+cg.state.cost+'\n');
+        node_info.append("h(n): "+cg.state.heuristic+'\n');
+        node_info.append("f(n): "+cg.state.a_star+'\n');
+
+//        System.out.println("i,j :"+cg.state.i+" "+cg.state.j);
+//        if(cg.operator!=null)
+//        System.out.println("operator: "+cg.operator);
+//        System.out.println("parent i,j and operator: "+ ((cg.parent!=null)?cg.parent.state.i + " "+cg.parent.state.j+" ,"+cg.parent.operator: "no parent"));
+//        System.out.println("remaining capacity: "+cg.state.remaining_capacity);
+//        System.out.println("remaining blackboxes: "+cg.state.remaining_blackboxes);
+//        System.out.println("remaining passengers: "+cg.state.remaining_passengers);
+//        System.out.println("rescued passengers: "+cg.state.rescued_passengers);
+//        System.out.println("retrieved boxes: "+cg.state.retrieved_boxes);
+//        System.out.println("depth: "+cg.state.depth);
+//        System.out.println("number of ships: "+cg.state.observers.size());
+
+        return node_info.toString();
     }
     public static String centerString (int width, String s) {
         return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
     }
 
-    public static void visualize(GridCell[][] grid, Node node) {
+    public static String visualize(GridCell[][] grid, Node node) {
         int cg_i = node.state.i;
         int cg_j = node.state.j;
 
-        System.out.println(grid.length + " hihi s" + grid[0].length);
+        //System.out.println(grid.length + " " + grid[0].length);
+        String rows="";
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 String cell= "";
@@ -107,19 +104,20 @@ public class GeneralSearchProblem {
 
                 } else if (curr != null && curr instanceof Ship) {
                     Ship ship= node.state.observers.get(i+","+j);
-                   cell=  i + " " + j + " " + " D:" + ship.deaths + " P:" + ship.passengers+ " BB:" + ship.black_box  ;
+                   cell=  i + " " + j + " " + " D:" + ship.deaths + " P:" + ship.passengers+ " BB:" + ship.black_box;
 
                 }
                 else
                    cell=  i + " " + j + " " + "empty";
 
                 if(cg_i == i && cg_j==j) cell+=" CG";
-                System.out.print(centerString(20, cell));
-                System.out.print("|");
+                rows+=centerString(20, cell)+"|";
+
             }
+            rows+='\n';
             System.out.println();
         }
-
+        return rows;
     }
     public static int checkSaved(Node node, int full_capacity) {
         if (node.operator!=null && node.operator.equals("drop")) {
@@ -199,14 +197,14 @@ public class GeneralSearchProblem {
 
             if (isRedundantState(cg, expanded)  && q.size()>1) {
 
-                System.out.println("redundant node ---------------");
-                printNode(cg);
-                System.out.println("end print statement of redundant node ---------------");
+//                System.out.println("redundant node ---------------");
+//                printNode(cg);
+//                System.out.println("end print statement of redundant node ---------------");
                 continue;
             }
             expanded.add(cg);
             count_nodes_expanded++;
-            printNode(cg);
+          //  printNode(cg);
             if (cg.operator != null) {
                 cg.state.observers = notifyObservers(cg.state.observers, cg);
                 totalPassengers -= checkSaved(cg, capacity); // remaining totalPassengers is the number of deaths that happened at each time step
@@ -217,12 +215,12 @@ public class GeneralSearchProblem {
 
             if (cg.goalTest(capacity)) {
                 pass_goal = cg;
-                String result = printPath(pass_goal) + ";" + cg.state.deaths+ ";" +cg.state.retrieved_boxes+";"+ count_nodes_expanded; // number of deaths, number of retrieved boxes?
+                String result = printPath(pass_goal, grid) + ";" + cg.state.deaths+ ";" +cg.state.retrieved_boxes+";"+ count_nodes_expanded; // number of deaths, number of retrieved boxes?
                 
-                for(String x: cg.state.observers.keySet()){
-                    System.out.println(cg.state.observers.get(x)+"    kk  "+cg.state.observers.get(x).done );
-                }
-                System.out.println("res returned " + result);
+//                for(String x: cg.state.observers.keySet()){
+//                    System.out.println(cg.state.observers.get(x)+"    kk  "+cg.state.observers.get(x).done );
+//                }
+//                System.out.println("res returned " + result);
                 return result;
             }
 
@@ -265,7 +263,7 @@ public class GeneralSearchProblem {
                 }
 
                 if (node.goalTest(capacity)) {
-                    result = printPath(node) + ";" + node.state.deaths + ";" + node.state.retrieved_boxes + ";" + total_expanded_nodes;
+                    result = printPath(node,grid) + ";" + node.state.deaths + ";" + node.state.retrieved_boxes + ";" + total_expanded_nodes;
                     return result;
                 }
                 if(node.state.depth <i)
@@ -283,7 +281,7 @@ public class GeneralSearchProblem {
         int jPosition = node.state.j;
         GridCell gridcell = grid[iPosition][jPosition];
 
-        printNode(node);
+      //  printNode(node);
         if (jPosition > 0) { // left
             Node left = new Node(iPosition, jPosition - 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
                     node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
@@ -341,15 +339,15 @@ public class GeneralSearchProblem {
             if (isRedundantState(node, expanded)) {
                 continue;
             }
-            visualize(grid,node);
+
             expanded.add(node);
-            printNode(node);
+            //printNode(node);
             if (node.operator != null) {
                 node.state.observers = notifyObservers(node.state.observers, node);
                 if (node.operator.equals("retrieve")) retrieved_blackboxes++;
             }
             if (node.goalTest(capacity)) {
-                String result = printPath(node) + ";" + node.state.deaths+ ";" +node.state.retrieved_boxes+";"+ expanded.size(); // number of deaths, number of retrieved boxes?
+                String result = printPath(node, grid) + ";" + node.state.deaths+ ";" +node.state.retrieved_boxes+";"+ expanded.size(); // number of deaths, number of retrieved boxes?
                 return result;
             }
 
@@ -360,7 +358,9 @@ public class GeneralSearchProblem {
                  expand(grid, node,q,capacity,1);
              } else if (strategy.equals("GR2")){
                 expand(grid, node,q,capacity,2);
-            }
+            }else if (strategy.equals("AS1")){
+                 expand(grid, node,q,capacity,3);
+             }
              else if (strategy.equals("AS2")){
                  expand(grid, node,q,capacity,4);
              }
@@ -376,6 +376,8 @@ public class GeneralSearchProblem {
             n.state.setHeuristic(assignHeuristic1(n)); // ?
         }else if(method_type==2){
             n.state.setHeuristic(assignHeuristic2(n));
+        } else if(method_type==3){
+            n.state.setA_star(assignA_star1(n));
         }
         else if(method_type==4){
             n.state.setA_star(assignA_star2(n));
@@ -428,6 +430,7 @@ public class GeneralSearchProblem {
 
                 int passengers_dropped_off = capacity - cg.state.remaining_capacity;
                 Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes, capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth);
+                calculateNodeVal(n,method_type);
                 q.add(n);
             }
         }
@@ -486,7 +489,9 @@ public class GeneralSearchProblem {
     public static double assignA_star2(Node node){
         return assignCost(node)+assignHeuristic2(node);
     }
-
+    public static double assignA_star1(Node node){
+        return assignCost(node)+assignHeuristic1(node);
+    }
     public static int assignCost(Node node){
         int num_bb_lost=0;
         int num_deaths=0;
@@ -588,15 +593,25 @@ public class GeneralSearchProblem {
         h = (2 * total_ships_CB) + total_BB_CB;
         return h;
     }
-
-    public static String printPath(Node cg) {
-        StringBuilder path = new StringBuilder(cg.operator);
-        cg = cg.parent;
+    public static String printPath(Node cg, GridCell[][] grid) {
+        StringBuilder visualized_path= new StringBuilder();
+        StringBuilder path = new StringBuilder();
         while (cg.operator != null) {
+            visualized_path.insert(0,printNode(cg)+"\n");
+            visualized_path.insert(0,visualize(grid, cg)+"\n");
+            visualized_path.insert(0,"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------"+'\n');
             path.insert(0, cg.operator + ",");
             cg = cg.parent;
         }
+        visualized_path.insert(0,printNode(cg)+"\n");
+        visualized_path.insert(0,visualize(grid, cg)+"\n");
+        final_visualized_path= visualized_path.toString();
+        //System.out.println(visualized_path.toString());
         return path.toString();
+    }
+
+    public static String getFinal_visualized_path(){
+        return  final_visualized_path;
     }
 }
 

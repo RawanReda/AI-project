@@ -167,12 +167,12 @@ public class CoastGuard extends GeneralSearchProblem {
 
         Node initial_state = new Node(cg_i, cg_j, total_passengers,
                 ship_location.length / 3, capacity, 0, null, null, observers,0, 0);
-        printGrid((grid), initial_state);
+       //printGrid((grid), initial_state);
         String res = "";
         Node goal = null;
         if (strategy.equals("DF")) {
             goal = GeneralSearch(initial_state, "DF", observers);
-            res = printPath(goal) + ";" + goal.state.deaths + ";" +goal.state.retrieved_boxes+";"+ goal.state.depth;
+            res = printPath(goal,grid) + ";" + goal.state.deaths + ";" +goal.state.retrieved_boxes+";"+ goal.state.depth;
 
             System.out.println("result for DFS "+res);
         } else if (strategy.equals("BF")) {
@@ -185,7 +185,8 @@ public class CoastGuard extends GeneralSearchProblem {
             res = expand_IS(grid, initial_state, capacity,strategy);
         }
 
-
+        if(visualise)
+            System.out.println(getFinal_visualized_path());
 
         return res;
     }
