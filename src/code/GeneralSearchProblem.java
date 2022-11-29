@@ -536,6 +536,7 @@ public class GeneralSearchProblem {
                             chosenKey_BB = visitedKey;
                         }
                     }
+
                 }
             }
             if(sh_i == -1){
