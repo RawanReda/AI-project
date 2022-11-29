@@ -1,8 +1,6 @@
 package code;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.ArrayList;
 
 public class GeneralSearchProblem {
 
@@ -343,7 +341,7 @@ public class GeneralSearchProblem {
             n.state.setCost(assignCost(n));
         }
         else if(method_type==1){
-            return;
+            n.state.setHeuristic(assignHeuristic1(n)); // ?
         }else if(method_type==2){
             n.state.setHeuristic(assignHeuristic2(n));
         }
@@ -487,6 +485,74 @@ public class GeneralSearchProblem {
         }
         double h = (1/(1+(closestShip_passengers-closestShip_CB)));
         System.out.println(h);
+        return h;
+    }
+
+    public static int assignHeuristic1( Node node){
+        int h;
+        int cg_i = node.state.i;
+        int cg_j = node.state.j;
+        int distance = 0;
+        int distanceBB = 0;
+        HashMap<String, Ship> ships = node.state.observers;
+        HashMap<String, Ship> noneVisitedShips = (HashMap<String, Ship>) node.state.observers.clone();
+        int sh_i=-1;
+        int sh_j=-1;
+        int bb_i=0;
+        int bb_j=0;
+        int closestShip_CB = Integer.MAX_VALUE;
+        int closestShip_CB_BB = Integer.MAX_VALUE;
+        int total_ships_CB = 0;
+        int total_BB_CB = 0;
+        String chosenKey = "";
+        String chosenKey_BB = "";
+        for (String key : ships.keySet()) {
+            for (String visitedKey: noneVisitedShips.keySet()) {
+                if (!ships.get(key).wrecked) {
+                    String[] location = key.split(",");
+                    distance = Math.abs(cg_i - Integer.parseInt(location[0])) + Math.abs(cg_j - Integer.parseInt(location[1]));
+                    if(ships.get(key).passengers - distance <= 0){
+                        continue;
+                    }
+                    else {
+                        if (distance < closestShip_CB) {
+                            closestShip_CB = distance;
+                            sh_i = Integer.parseInt(location[0]);
+                            sh_j = Integer.parseInt(location[1]);
+                            chosenKey = visitedKey;
+                        }
+                    }
+                } else if (ships.get(key).wrecked) {
+                    String[] location = key.split(",");
+                    distanceBB = Math.abs(cg_i - Integer.parseInt(location[0])) + Math.abs(cg_j - Integer.parseInt(location[1]));
+                    if(ships.get(key).expiry_date - distanceBB <= 0){
+                        continue;
+                    }
+                    else {
+                        if (distanceBB < closestShip_CB_BB) {
+                            closestShip_CB_BB = distanceBB;
+                            bb_i = Integer.parseInt(location[0]);
+                            bb_j = Integer.parseInt(location[1]);
+                            chosenKey_BB = visitedKey;
+                        }
+                    }
+                }
+            }
+            if(sh_i == -1){
+                cg_i = bb_i;
+                cg_j = bb_j;
+                noneVisitedShips.remove(chosenKey_BB);
+            }
+            else {
+                cg_i = sh_i;
+                cg_j = sh_j;
+                noneVisitedShips.remove(chosenKey);
+            }
+            total_ships_CB += closestShip_CB;
+            total_BB_CB += closestShip_CB_BB;
+
+        }
+        h = (2 * total_ships_CB) + total_BB_CB;
         return h;
     }
 
