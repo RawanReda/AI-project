@@ -50,7 +50,9 @@ public class CoastGuard extends GeneralSearchProblem {
 
         return grid_string.toString();
     }
-
+    public static String centerString (int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
+    }
     public static void printGrid(GridCell[][] grid, Node node) {
         cg_i = node.state.i;
         cg_j = node.state.j;
@@ -61,15 +63,16 @@ public class CoastGuard extends GeneralSearchProblem {
 
                 GridCell curr = grid[i][j];
                 if (curr != null && curr instanceof Station) {
-                    System.out.print(i + " " + j + "  " + "ST     |  ");
+                    System.out.print(centerString(20, i + " " + j + "  " + "ST"));
 
                 } else if (curr != null && curr instanceof Ship) {
-                    System.out.print(i + " " + j + " " + " D:" + ((Ship) curr).deaths + "  P: " + ((Ship) curr).passengers + "   | ");
+                    System.out.print(centerString(20, i + " " + j + " " + " D:" + ((Ship) curr).deaths + "  P: " + ((Ship) curr).passengers ));
 
                 } else if (i == cg_i && j == cg_j)
-                    System.out.print(i + " " + j + " " + "CG" + "   |   ");
+                    System.out.print(centerString(20, i + " " + j + " " + "CG"));
                 else
-                    System.out.print(i + " " + j + " " + "empty" + "   |   ");
+                    System.out.print(centerString(20, i + " " + j + " " + "empty"));
+                System.out.print("|");
             }
             System.out.println();
         }
