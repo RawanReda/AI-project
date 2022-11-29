@@ -106,22 +106,22 @@ public class GeneralSearchProblem {
         if (cg_i < grid.length - 1) {
             q.add(new Node(cg_i + 1, cg_j,
                     cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                    cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1 , Integer.MAX_VALUE));
+                    cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1 ));
         }
         if (cg_i > 0) {
             q.add(new Node(cg_i - 1, cg_j,
                     cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                    cg.state.remaining_capacity, cg.state.rescued_passengers, "up", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                    cg.state.remaining_capacity, cg.state.rescued_passengers, "up", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
         }
         if (cg_j < grid[0].length - 1) {
             q.add(new Node(cg_i, cg_j + 1,
                     cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                    cg.state.remaining_capacity, cg.state.rescued_passengers, "right", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                    cg.state.remaining_capacity, cg.state.rescued_passengers, "right", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
         }
         if (cg_j > 0) {
             q.add(new Node(cg_i, cg_j - 1,
                     cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                    cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                    cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
         }
 
         if (grid[cg_i][cg_j] != null) {
@@ -135,13 +135,13 @@ public class GeneralSearchProblem {
 //                        ship.passengers -= passengers_carried;
                     q.add(new Node(cg_i, cg_j,
                             cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                            cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                            cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
 
                 } else if (ship.wrecked  && !ship.done) {
 
                     q.add(new Node(cg_i, cg_j,
                             cg.state.remaining_passengers, cg.state.remaining_blackboxes,
-                            cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                            cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1));
                 }
 
             }
@@ -152,7 +152,7 @@ public class GeneralSearchProblem {
                 int passengers_dropped_off = capacity - cg.state.remaining_capacity;
                 q.add(new Node(cg_i, cg_j,
                         cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes,
-                        capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE));
+                        capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth+1));
             }
         }
     }
@@ -168,7 +168,7 @@ public class GeneralSearchProblem {
         while (!q.isEmpty()) {
             cg = q.poll();
 
-            if (isRedundantState(cg, expanded)) {
+            if (isRedundantState(cg, expanded)  && q.size()>1) {
 
                 System.out.println("redundant node ---------------");
                 printNode(cg);
@@ -257,29 +257,29 @@ public class GeneralSearchProblem {
         printNode(node);
         if (jPosition > 0) { // left
             Node left = new Node(iPosition, jPosition - 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                    node.state.remaining_capacity, node.state.rescued_passengers, "left", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(left);
         }
         if (jPosition < grid[0].length - 1) { // right
             Node right = new Node(iPosition, jPosition + 1, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "right", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                    node.state.remaining_capacity, node.state.rescued_passengers, "right", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(right);
         }
         if (iPosition > 0) { //up
             Node up = new Node(iPosition - 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "up", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                    node.state.remaining_capacity, node.state.rescued_passengers, "up", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(up);
         }
         if (iPosition < grid.length - 1) { //down
             Node down = new Node(iPosition + 1, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "down", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                    node.state.remaining_capacity, node.state.rescued_passengers, "down", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(down);
         }
         if (gridcell != null && gridcell instanceof Ship) {
             Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
             if (ship.passengers > 0 && node.state.remaining_capacity > 0) {
                 Node pickup = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                        node.state.remaining_capacity, node.state.rescued_passengers, "pickup", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
                 queue.add(pickup);
             }
         }
@@ -287,20 +287,20 @@ public class GeneralSearchProblem {
             Ship ship = (Ship) node.state.observers.get(iPosition+","+jPosition);
             if (ship.wrecked && ship.black_box <20 && !ship.done) {
                 Node retrieve = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                        node.state.remaining_capacity, node.state.rescued_passengers, "retrieve", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
                 queue.add(retrieve);
             }
         }
         if (gridcell != null && gridcell instanceof Station && node.state.remaining_capacity < capacity) {
             Node drop = new Node(iPosition, jPosition, node.state.remaining_passengers, node.state.remaining_blackboxes,
-                    node.state.remaining_capacity, node.state.rescued_passengers, "drop", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1, Integer.MAX_VALUE);
+                    node.state.remaining_capacity, node.state.rescued_passengers, "drop", node, node.state.observers, node.state.retrieved_boxes, node.state.depth+1);
             queue.add(drop);
         }
 
         return queue;
     }
 
-    public static String GR2(GridCell[][] grid, Node initial_state, int capacity){
+    public static String expand_IS(GridCell[][] grid, Node initial_state, int capacity, String strategy){
         int retrieved_blackboxes = 0;
         PriorityQueue<Node> q = new PriorityQueue<>();
         ArrayList<Node> expanded = new ArrayList<Node>();
@@ -323,33 +323,108 @@ public class GeneralSearchProblem {
                 return result;
             }
 
-            expandGR2(grid, node,q,capacity);
+
+             if (strategy.equals("UC")){
+                expand(grid, node,q,capacity,0);
+            } else if (strategy.equals("GR1")){
+                 expand(grid, node,q,capacity,1);
+             } else if (strategy.equals("GR2")){
+                expand(grid, node,q,capacity,2);
+            }
+             else if (strategy.equals("AS2")){
+                 expand(grid, node,q,capacity,4);
+             }
 
         }
         return "There is no goal state";
     }
+    public static void calculateNodeVal(Node n, int method_type){
+        if(method_type==0){
+            n.state.setCost(assignCost(n));
+        }
+        else if(method_type==1){
+            return;
+        }else if(method_type==2){
+            n.state.setHeuristic(assignHeuristic2(n));
+        }
+        else if(method_type==4){
+            n.state.setA_star(assignA_star2(n));
+        }
+    }
+
+
+    public static void expand(GridCell[][] grid, Node cg, PriorityQueue q, int capacity, int method_type){
+
+        int cg_i= cg.state.i;
+        int cg_j= cg.state.j;
+        if (cg_i < grid.length - 1) {
+            Node n = new Node(cg_i + 1, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1 );
+            calculateNodeVal(n,method_type);
+            q.add(n);
+        }
+        if (cg_i > 0) {
+            Node n = new Node(cg_i - 1, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "up", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
+            calculateNodeVal(n,method_type);
+            q.add(n);
+        }
+        if (cg_j < grid[0].length - 1) {
+            Node n = new Node(cg_i, cg_j + 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "right", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
+            calculateNodeVal(n,method_type);
+            q.add(n);
+        }
+        if (cg_j > 0) {
+            Node n = new Node(cg_i, cg_j - 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
+            calculateNodeVal(n,method_type);
+            q.add(n);
+        }
+
+        if (grid[cg_i][cg_j] != null) {
+            if(cg.state.observers.containsKey(cg_i+","+cg_j)){
+                Ship ship = cg.state.observers.get(cg_i+","+cg_j);
+                int remaining_capacity = cg.state.remaining_capacity;
+                if (!ship.wrecked && remaining_capacity > 0) {
+                    Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
+                    calculateNodeVal(n,method_type);
+                    q.add(n);
+                } else if (ship.wrecked  && !ship.done) {
+                    Node n = new Node(cg_i, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
+                    calculateNodeVal(n,method_type);
+                    q.add(n);
+                }
+            }
+
+            if (grid[cg_i][cg_j] instanceof Station && cg.state.remaining_capacity < capacity) {
+                Station ship = (Station) grid[cg_i][cg_j];
+
+                int passengers_dropped_off = capacity - cg.state.remaining_capacity;
+                Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes, capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth);
+                q.add(n);
+            }
+        }
+    }
+
 
     public static void expandGR2(GridCell[][] grid, Node cg, PriorityQueue q, int capacity){
 
         int cg_i= cg.state.i;
         int cg_j= cg.state.j;
         if (cg_i < grid.length - 1) {
-            Node n = new Node(cg_i + 1, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1, Integer.MAX_VALUE );
+            Node n = new Node(cg_i + 1, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1 );
             n.state.setHeuristic(assignHeuristic2(n));
             q.add(n);
         }
         if (cg_i > 0) {
-            Node n = new Node(cg_i - 1, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "up", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1,  Integer.MAX_VALUE);
+            Node n = new Node(cg_i - 1, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "up", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
             n.state.setHeuristic(assignHeuristic2(n));
             q.add(n);
         }
         if (cg_j < grid[0].length - 1) {
-            Node n = new Node(cg_i, cg_j + 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "right", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1,  Integer.MAX_VALUE);
+            Node n = new Node(cg_i, cg_j + 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "right", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
             n.state.setHeuristic(assignHeuristic2(n));
             q.add(n);
         }
         if (cg_j > 0) {
-            Node n = new Node(cg_i, cg_j - 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1,  Integer.MAX_VALUE);
+            Node n = new Node(cg_i, cg_j - 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
             n.state.setHeuristic(assignHeuristic2(n));
             q.add(n);
         }
@@ -359,11 +434,11 @@ public class GeneralSearchProblem {
                 Ship ship = cg.state.observers.get(cg_i+","+cg_j);
                 int remaining_capacity = cg.state.remaining_capacity;
                 if (!ship.wrecked && remaining_capacity > 0) {
-                    Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1,  Integer.MAX_VALUE);
+                    Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity , cg.state.rescued_passengers, "pickup", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
                     n.state.setHeuristic(assignHeuristic2(n));
                     q.add(n);
                 } else if (ship.wrecked  && !ship.done) {
-                    Node n = new Node(cg_i, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1,  Integer.MAX_VALUE);
+                    Node n = new Node(cg_i, cg_j,cg.state.remaining_passengers, cg.state.remaining_blackboxes,cg.state.remaining_capacity, cg.state.rescued_passengers, "retrieve", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth+1);
                     n.state.setHeuristic(assignHeuristic2(n));
                     q.add(n);
                 }
@@ -373,12 +448,27 @@ public class GeneralSearchProblem {
                 Station ship = (Station) grid[cg_i][cg_j];
 
                 int passengers_dropped_off = capacity - cg.state.remaining_capacity;
-                Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes, capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth+1, 0.0000000000000000000000000000000000000001);
+                Node n = new Node(cg_i, cg_j, cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes, capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers,cg.state.retrieved_boxes, cg.state.depth+1);
                 q.add(n);
             }
         }
     }
+    public static double assignA_star2(Node node){
+        return assignCost(node)+assignHeuristic2(node);
+    }
 
+    public static int assignCost(Node node){
+        int num_bb_lost=0;
+        int num_deaths=0;
+        HashMap<String, Ship> ships = node.state.observers;
+        for(String key: ships.keySet()){
+            Ship ship= ships.get(key);
+            if(ship.black_box>=20)
+                num_bb_lost++;
+            num_deaths+=ship.deaths;
+        }
+            return 2*num_deaths+num_bb_lost;
+    }
     public static double assignHeuristic2( Node node){
       //  h(n) = 1-[1/1+(remaining passengers in nearest ship - cb distance to that ship)
         //find nearest ship
@@ -395,7 +485,7 @@ public class GeneralSearchProblem {
                 closestShip_passengers = ships.get(key).passengers;
             }
         }
-        double h = 1-(1/(1+(closestShip_passengers-closestShip_CB)));
+        double h = (1/(1+(closestShip_passengers-closestShip_CB)));
         System.out.println(h);
         return h;
     }

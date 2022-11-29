@@ -163,7 +163,7 @@ public class CoastGuard extends GeneralSearchProblem {
         }
 
         Node initial_state = new Node(cg_i, cg_j, total_passengers,
-                ship_location.length / 3, capacity, 0, null, null, observers,0, 0, Integer.MAX_VALUE);
+                ship_location.length / 3, capacity, 0, null, null, observers,0, 0);
         printGrid((grid), initial_state);
         String res = "";
         Node goal = null;
@@ -178,9 +178,10 @@ public class CoastGuard extends GeneralSearchProblem {
         else if (strategy.equals("ID")){
             res = IDS(grid, initial_state, capacity, total_passengers);
         }
-        else if (strategy.equals("GR2")){
-            res = GR2(grid, initial_state, capacity);
+        else {
+            res = expand_IS(grid, initial_state, capacity,strategy);
         }
+
 
 
         return res;
