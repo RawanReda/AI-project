@@ -88,8 +88,39 @@ public class GeneralSearchProblem {
         System.out.println("retrieved boxes: "+cg.state.retrieved_boxes);
         System.out.println("depth: "+cg.state.depth);
         System.out.println("number of ships: "+cg.state.observers.size());
-}
+    }
+    public static String centerString (int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
+    }
 
+    public static void visualize(GridCell[][] grid, Node node) {
+        int cg_i = node.state.i;
+        int cg_j = node.state.j;
+
+        System.out.println(grid.length + " hihi s" + grid[0].length);
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                String cell= "";
+                GridCell curr = grid[i][j];
+                if (curr != null && curr instanceof Station) {
+                    cell= i + " " + j + " " + "ST";
+
+                } else if (curr != null && curr instanceof Ship) {
+                    Ship ship= node.state.observers.get(i+","+j);
+                   cell=  i + " " + j + " " + " D:" + ship.deaths + " P:" + ship.passengers+ " BB:" + ship.black_box  ;
+
+                }
+                else
+                   cell=  i + " " + j + " " + "empty";
+
+                if(cg_i == i && cg_j==j) cell+=" CG";
+                System.out.print(centerString(20, cell));
+                System.out.print("|");
+            }
+            System.out.println();
+        }
+
+    }
     public static int checkSaved(Node node, int full_capacity) {
         if (node.operator!=null && node.operator.equals("drop")) {
             return full_capacity - node.state.remaining_capacity;
@@ -310,6 +341,7 @@ public class GeneralSearchProblem {
             if (isRedundantState(node, expanded)) {
                 continue;
             }
+            visualize(grid,node);
             expanded.add(node);
             printNode(node);
             if (node.operator != null) {
