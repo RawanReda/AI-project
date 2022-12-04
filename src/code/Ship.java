@@ -12,6 +12,7 @@ public class Ship extends GridCell implements Observer {
      @Override
      public Object clone() {
                Ship new_ship= new Ship(this.passengers, this.i, this.j);
+               System.out.println("bb val "+this.black_box);
                new_ship.black_box = this.black_box;
                new_ship.done= this.done ;
                new_ship.deaths = this.deaths;

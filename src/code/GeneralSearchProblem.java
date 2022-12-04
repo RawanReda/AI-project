@@ -1,5 +1,6 @@
 package code;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GeneralSearchProblem {
@@ -41,18 +42,15 @@ static String final_visualized_path="";
     }
 
 
-    public static boolean isRedundantState(Node n1, ArrayList<Node> expanded) {
-        if (expanded.isEmpty())
-            return false;
-        for (int i = 0; i < expanded.size(); i++) {
-            Node pre_node = expanded.get(i);
-            if (n1.state.i == pre_node.state.i && n1.state.j == pre_node.state.j && !n1.operator.equals("pickup") && !n1.operator.equals("retrieve") && !n1.operator.equals("drop")
-                    && n1.state.remaining_capacity == pre_node.state.remaining_capacity && n1.state.rescued_passengers == pre_node.state.rescued_passengers && n1.state.remaining_blackboxes==pre_node.state.remaining_blackboxes)
-                return true;
-                  }
+    public static boolean isRedundant(Node node, HashSet<String> expanded){
+        if(node.operator!=null && !node.operator.equals("pickup") && !node.operator.equals("drop") && !node.operator.equals("retrieve")){
+            String state= node.state.i+","+node.state.j+","+node.state.remaining_capacity+","+node.state.rescued_passengers+","+node.state.remaining_blackboxes;
+            if(expanded.contains(state)) return true;
+            expanded.add(state);
+        }
+
         return false;
     }
-
     public static String printNode(Node cg){
 
         StringBuilder node_info=new StringBuilder();
@@ -104,7 +102,7 @@ static String final_visualized_path="";
 
                 } else if (curr != null && curr instanceof Ship) {
                     Ship ship= node.state.observers.get(i+","+j);
-                   cell=  i + " " + j + " " + " D:" + ship.deaths + " P:" + ship.passengers+ " BB:" + ship.black_box;
+                   cell=  i + " " + j + " " + " D:" + ship.deaths + " P:" + ship.passengers+ " BB:" + ship.black_box + ship.done;
 
                 }
                 else
@@ -184,38 +182,38 @@ static String final_visualized_path="";
         }
     }
 
+
     public static String BFS(GridCell[][] grid, Node cg, int capacity, int totalPassengers) {
         Node pass_goal = null;
-        int count_nodes_expanded = 0;
-        int retrieved_blackboxes = 0;
         Queue<Node> q = new LinkedList<>();
-        ArrayList<Node> expanded = new ArrayList<Node>();
+        HashSet<String> expanded = new HashSet<>();
         q.add(cg);
 
         while (!q.isEmpty()) {
             cg = q.poll();
 
-            if (isRedundantState(cg, expanded)  && q.size()>1) {
+            if (isRedundant(cg, expanded)  && q.size()>1) {
 
 //                System.out.println("redundant node ---------------");
 //                printNode(cg);
 //                System.out.println("end print statement of redundant node ---------------");
                 continue;
             }
-            expanded.add(cg);
-            count_nodes_expanded++;
+
+            System.out.println(expanded.size()+"  hii");
+            //expanded.add(cg);
           //  printNode(cg);
             if (cg.operator != null) {
                 cg.state.observers = notifyObservers(cg.state.observers, cg);
-                totalPassengers -= checkSaved(cg, capacity); // remaining totalPassengers is the number of deaths that happened at each time step
-                if (cg.operator.equals("retrieve")) retrieved_blackboxes++;
+             //   totalPassengers -= checkSaved(cg, capacity); // remaining totalPassengers is the number of deaths that happened at each time step
+
             }
 
             //printGrid(grid, cg);
 
             if (cg.goalTest(capacity)) {
                 pass_goal = cg;
-                String result = printPath(pass_goal, grid) + ";" + cg.state.deaths+ ";" +cg.state.retrieved_boxes+";"+ count_nodes_expanded; // number of deaths, number of retrieved boxes?
+                String result = printPath(pass_goal, grid) + ";" + cg.state.deaths+ ";" +cg.state.retrieved_boxes+";"+ expanded.size(); // number of deaths, number of retrieved boxes?
                 
 //                for(String x: cg.state.observers.keySet()){
 //                    System.out.println(cg.state.observers.get(x)+"    kk  "+cg.state.observers.get(x).done );
@@ -236,18 +234,19 @@ static String final_visualized_path="";
             String result="";
             System.out.println("----------------------------------------");
             System.out.println("Restarting: New Max Depth: " +i);
-            ArrayList<Node> expanded = new ArrayList<Node>();
+           // ArrayList<Node> expanded= new ArrayList<>();
+          HashSet<String> expanded = new HashSet<>();
             QueueLIFO q = new QueueLIFO();
             int retrieved_blackboxes = 0;
             q.add(initial_state);
 
             while (!q.isEmpty()) {
                 Node node = q.remove();
-                if (node.operator!=null && isRedundantState(node, expanded)) {
+                if (node.operator!=null && isRedundant(node, expanded) && q.size()>1) {
                     System.out.println("Redundant State: i,j: "+ node.state.i +" " + node.state.j + "operator: " + node.operator);
                     continue;
                 }
-                expanded.add(node);
+                //expanded.add(node);
                 total_expanded_nodes++;
 //                printNode(node);
                 if (node.operator != null) {
@@ -328,23 +327,19 @@ static String final_visualized_path="";
     }
 
     public static String expand_IS(GridCell[][] grid, Node initial_state, int capacity, String strategy){
-        int retrieved_blackboxes = 0;
         PriorityQueue<Node> q = new PriorityQueue<>();
-        ArrayList<Node> expanded = new ArrayList<Node>();
+        HashSet<String> expanded = new HashSet<>();
         q.add(initial_state);
 
         while (!q.isEmpty()) {
             Node node = q.poll();
 
-            if (isRedundantState(node, expanded)) {
+            if (isRedundant(node, expanded) && q.size()>1) {
                 continue;
             }
 
-            expanded.add(node);
-            //printNode(node);
             if (node.operator != null) {
                 node.state.observers = notifyObservers(node.state.observers, node);
-                if (node.operator.equals("retrieve")) retrieved_blackboxes++;
             }
             if (node.goalTest(capacity)) {
                 String result = printPath(node, grid) + ";" + node.state.deaths+ ";" +node.state.retrieved_boxes+";"+ expanded.size(); // number of deaths, number of retrieved boxes?
@@ -611,7 +606,5 @@ static String final_visualized_path="";
     }
 
     public static String getFinal_visualized_path(){
-        return  final_visualized_path;
-    }
+        return  final_visualized_path;}
 }
-

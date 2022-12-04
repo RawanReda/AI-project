@@ -26,7 +26,7 @@ public class CoastGuard extends GeneralSearchProblem {
         capacity = (int) (Math.random() * 70 + 1) + 30;
         cg_i = (int) (Math.random() * n); //row
         cg_j = (int) (Math.random() * m); //col
-
+grid= new GridCell[n][m];
         grid_string.append(m + "," + n + ";" + capacity + ";" + cg_i + "," + cg_j + ";");
 
         System.out.println("col:" + m + " row:" + n + " cg_i:" + cg_i + " cg_c:" + cg_j);
@@ -106,7 +106,7 @@ public class CoastGuard extends GeneralSearchProblem {
                     locations_occupied.put(row, cols);
                 }
                 if (type.equals("S")) {
-                    grid_string.append(row + "," + col + "," + (int) ((Math.random() * 100) + 1));
+                    grid_string.append(row + "," + col + "," + (int) ((Math.random() * 20) + 1));
                 } else {
                     grid_string.append(row + "," + col);
                 }
@@ -194,15 +194,15 @@ public class CoastGuard extends GeneralSearchProblem {
     public static Node GeneralSearch(Node initial_state,  String strategy, HashMap<String, Ship> observers) {
 
         QueueLIFO queue = new QueueLIFO();
-        ArrayList<Node> expanded = new ArrayList<Node>();
+        HashSet<String> expanded= new HashSet<>();
         queue.add(initial_state);
         while (!queue.isEmpty()) {
             System.out.println("---------------------------------------------------");
             Node Node = queue.remove();
-            if (isRedundantState(Node, expanded) && queue.size()>1) {
+            if (isRedundant(Node, expanded) && queue.size()>1) {
                 continue;
             }
-            expanded.add(Node);
+            //expanded.add(Node);
             if (!(Node.equals(initial_state))) {
                 Node.state.observers = notifyObservers(Node.state.observers,Node);
             }
@@ -231,8 +231,8 @@ public class CoastGuard extends GeneralSearchProblem {
 
     public static void main(String[] args) {
         String grid0 = "7,5;100;3,4;2,6,3,5;0,0,4,0,1,8,1,4,77,1,5,1,3,2,94,4,3,46;";
-        solve(grid0, "GR2", false);
-
+//        solve(grid0, "GR2", false);
+System.out.println(genGrid());
     }
 
 
