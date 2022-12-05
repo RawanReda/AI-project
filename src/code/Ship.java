@@ -12,7 +12,6 @@ public class Ship extends GridCell implements Observer {
      @Override
      public Object clone() {
                Ship new_ship= new Ship(this.passengers, this.i, this.j);
-               System.out.println("bb val "+this.black_box);
                new_ship.black_box = this.black_box;
                new_ship.done= this.done ;
                new_ship.deaths = this.deaths;
@@ -23,7 +22,6 @@ public class Ship extends GridCell implements Observer {
 
      public Ship(int passengers, int i, int j) {
           this.passengers = passengers;
-          //this.black_box = 0;
           this.done = false;
           super.i = i;
           super.j = j;
@@ -40,7 +38,6 @@ public class Ship extends GridCell implements Observer {
                     this.passengers -= saved;
                     node.state.remaining_capacity -= saved;
 
-                  //  node.state.rescued_passengers += saved;
                     if(this.passengers > 0){
                          this.passengers--;
                          node.state.remaining_passengers--;
@@ -51,7 +48,6 @@ public class Ship extends GridCell implements Observer {
 
                }
                else if(node.operator.equals("retrieve") && node.state.i == i && node.state.j == j && wrecked && black_box<expiry_date){
-//                    System.out.println("ship Black Box Retrieved ");
                     this.done = true;
                     node.state.remaining_blackboxes--;
                     node.state.retrieved_boxes++;
@@ -63,7 +59,6 @@ public class Ship extends GridCell implements Observer {
                     if (passengers == 0) {
                          this.wrecked = true;
                     }
-
                }
                else if(wrecked){
                     if(black_box < expiry_date){
