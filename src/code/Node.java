@@ -8,9 +8,9 @@ public class Node implements Comparable<Node>{
 
     @Override
     public int compareTo(Node o) {
-        if(this.state.heuristic<o.state.heuristic)
+        if(this.state.value<o.state.value)
             return -1;
-        if(this.state.heuristic>o.state.heuristic)
+        if(this.state.value>o.state.value)
             return 1;
         return 0;
     }
@@ -25,20 +25,12 @@ public class Node implements Comparable<Node>{
         int retrieved_boxes;
         int depth;
         int deaths;
-        double heuristic;
-        int cost ;
-        double a_star;
+        double value;
         HashMap<String, Ship> observers;
+        public void setValue(double val) {
+            this.value = val;
+        }
 
-        public void setA_star(double a_star) {
-            this.a_star = a_star;
-        }
-        public void setCost(int cost) {
-            this.cost = cost;
-        }
-        public void setHeuristic(double heuristic) {
-            this.heuristic = heuristic;
-        }
         public State(int i, int j, int remaining_passengers, int remaining_blackboxes, int current_capacity, int rescued_passengers,  HashMap<String, Ship> s, int retrieved_boxes, int depth){
             this.i=i;
             this.j=j;
@@ -50,10 +42,7 @@ public class Node implements Comparable<Node>{
             this.retrieved_boxes=retrieved_boxes;
             this.depth=depth;
             this.deaths=0;
-            this.heuristic = Double.MAX_VALUE;
-            this.cost= Integer.MAX_VALUE;
-            this.a_star= Double.MAX_VALUE;
-
+            this.value= Double.MAX_VALUE;
         }
     }
     Node parent;
@@ -69,10 +58,6 @@ public class Node implements Comparable<Node>{
     }
 
     public boolean goalTest (int full_capacity){
-        System.out.println("Check Goal State");
-        System.out.println("Remaining Passengers: " + this.state.remaining_passengers );
-        System.out.println("Remaining BB:  +"+ this.state.remaining_blackboxes);
-        System.out.println("Remaining Capacity" + this.state.remaining_capacity);
         return (this.state.remaining_passengers==0 && this.state.remaining_blackboxes ==0
         && this.state.remaining_capacity == full_capacity);
     }

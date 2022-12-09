@@ -5,7 +5,7 @@ import java.util.*;
 
 public class GeneralSearchProblem {
     static String final_visualized_path = "";
-    static int full_capacity = 0;
+
 
     static class QueueLIFO {
         private ArrayList<Node> myArray = new ArrayList<Node>();
@@ -64,11 +64,9 @@ public class GeneralSearchProblem {
         node_info.append("remaining passengers: " + cg.state.remaining_passengers + '\n');
         node_info.append("rescued passengers: " + cg.state.rescued_passengers + '\n');
         node_info.append("retrieved boxes: " + cg.state.retrieved_boxes + '\n');
+        node_info.append("number of deaths: " + cg.state.deaths + '\n');
         node_info.append("depth: " + cg.state.depth + '\n');
         node_info.append("number of ships: " + cg.state.observers.size() + '\n');
-        node_info.append("cost: " + cg.state.cost + '\n');
-        node_info.append("h(n): " + cg.state.heuristic + '\n');
-        node_info.append("f(n): " + cg.state.a_star + '\n');
 
         return node_info.toString();
     }
@@ -263,7 +261,6 @@ public class GeneralSearchProblem {
     public static String expand_IS(GridCell[][] grid, Node initial_state, int capacity, String strategy) {
         PriorityQueue<Node> q = new PriorityQueue<>();
         HashSet<String> expanded = new HashSet<>();
-        full_capacity = capacity;
         q.add(initial_state);
 
         while (!q.isEmpty()) {
@@ -301,15 +298,15 @@ public class GeneralSearchProblem {
 
     public static void calculateNodeVal(Node n, int method_type) {
         if (method_type == 0) {
-            n.state.setCost(assignCost(n));
+            n.state.setValue(assignCost(n));
         } else if (method_type == 1) {
-            n.state.setHeuristic(assignHeuristic1(n)); // ?
+            n.state.setValue(assignHeuristic1(n)); // ?
         } else if (method_type == 2) {
-            n.state.setHeuristic(assignHeuristic2(n));
+            n.state.setValue(assignHeuristic2(n));
         } else if (method_type == 3) {
-            n.state.setA_star(assignA_star1(n));
+            n.state.setValue(assignA_star1(n));
         } else if (method_type == 4) {
-            n.state.setA_star(assignA_star2(n));
+            n.state.setValue(assignA_star2(n));
         }
     }
 
@@ -386,8 +383,7 @@ public class GeneralSearchProblem {
     }
 
     public static double assignHeuristic2(Node node) {
-        //  h(n) = 1-[1/1+(remaining passengers in nearest ship - cb distance to that ship)
-        //find nearest ship
+
         int cg_i = node.state.i;
         int cg_j = node.state.j;
         HashMap<String, Ship> ships = node.state.observers;
@@ -404,8 +400,6 @@ public class GeneralSearchProblem {
         double h = ((double) 1 / (1 + (closestShip_passengers - closestShip_CB)));
 
         if (closestShip_passengers == Integer.MAX_VALUE) h = 0;
-        // if(node.goalTest(full_capacity)) h=0;
-        //System.out.println(h);
         return h;
     }
 

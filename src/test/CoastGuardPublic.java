@@ -30,9 +30,10 @@ public class CoastGuardPublic {
 
 	@Test(timeout = 100000)
 	public void testa0() throws Exception {
-		String solution = CoastGuard.solve(grid0, "BF", true);
+		String solution = CoastGuard.solve(grid10, "ID", true);
 		solution = solution.replace(" ", "");
-		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid0, solution));
+		System.out.println(solution);
+		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
 	}
 	
 	@Test(timeout = 10000)
