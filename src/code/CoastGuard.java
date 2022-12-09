@@ -29,8 +29,6 @@ public class CoastGuard extends GeneralSearchProblem {
         grid= new GridCell[n][m];
         grid_string.append(m + "," + n + ";" + capacity + ";" + cg_i + "," + cg_j + ";");
 
-        System.out.println("col:" + m + " row:" + n + " cg_i:" + cg_i + " cg_c:" + cg_j);
-
         // save location of the coast gaurd in the hashmap
         HashSet<Integer> cg_col = new HashSet<>();
         cg_col.add(cg_j);
@@ -38,7 +36,6 @@ public class CoastGuard extends GeneralSearchProblem {
 
         int rem_cells = (m * n) - 1;
 
-        System.out.println("rem cell  " + rem_cells);
         int n_stations = (int) (Math.random() * rem_cells) + 1;
         rem_cells -= n_stations;
         int n_ships = (int) (Math.random() * rem_cells) + 1;
@@ -152,7 +149,7 @@ public class CoastGuard extends GeneralSearchProblem {
         HashSet<String> expanded= new HashSet<>();
         queue.add(initial_state);
         while (!queue.isEmpty()) {
-            System.out.println("---------------------------------------------------");
+
             Node Node = queue.remove();
             if (isRedundant(Node, expanded) && queue.size()>1) {
                 continue;
@@ -169,10 +166,6 @@ public class CoastGuard extends GeneralSearchProblem {
 
             }
             if (Node.goalTest(capacity)) {
-                System.out.println("############### DONE ##################");
-                System.out.println("Number of people rescued: " + Node.state.rescued_passengers);
-                System.out.println("Number of deaths: " + Node.state.deaths);
-                System.out.println("Number of expanded nodes (depth): " + expanded.size());
                 return Node;
             } else {
                 if (strategy.equals("DF")) {
