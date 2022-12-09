@@ -186,7 +186,14 @@ public class CoastGuard extends GeneralSearchProblem {
 
     public static void main(String[] args) {
         String grid0 = "7,5;100;3,4;2,6,3,5;0,0,4,0,1,8,1,4,77,1,5,1,3,2,94,4,3,46;";
-        System.out.println(genGrid());
+        System.out.println(solve(grid0, "UC", false));
+        System.out.println(solve(grid0, "AS1", false));
+        System.out.println(solve(grid0, "AS2", false));
+        System.out.println(solve(grid0, "GR1", false));
+        System.out.println(solve(grid0, "GR2", false));
+        System.out.println(solve(grid0, "BF", false));
+        System.out.println(solve(grid0, "DF", false));
+
     }
 
 

@@ -43,9 +43,8 @@ public class GeneralSearchProblem {
         return ships_list;
     }
 
-
     public static boolean isRedundant(Node node, HashSet<String> expanded) {
-        if (node.operator != null && !node.operator.equals("pickup") && !node.operator.equals("drop")) {
+        if (node.operator != null && !node.operator.equals("pickup") && !node.operator.equals("drop") && !node.operator.equals("retrieve")) {
             String state = node.state.i + "," + node.state.j + "," + node.state.remaining_capacity + "," + node.state.rescued_passengers;
             if (expanded.contains(state)) return true;
             expanded.add(state);
@@ -106,11 +105,12 @@ public class GeneralSearchProblem {
         return rows;
     }
 
-
     public static void expand(GridCell[][] grid, Node cg, Queue q, int capacity) {
 
         int cg_i = cg.state.i;
         int cg_j = cg.state.j;
+
+
         if (cg_i < grid.length - 1) {
             q.add(new Node(cg_i + 1, cg_j, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "down", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth + 1));
         }
@@ -123,7 +123,6 @@ public class GeneralSearchProblem {
         if (cg_j > 0) {
             q.add(new Node(cg_i, cg_j - 1, cg.state.remaining_passengers, cg.state.remaining_blackboxes, cg.state.remaining_capacity, cg.state.rescued_passengers, "left", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth + 1));
         }
-
         if (grid[cg_i][cg_j] != null) {
             if (cg.state.observers.containsKey(cg_i + "," + cg_j)) {
                 Ship ship = cg.state.observers.get(cg_i + "," + cg_j);
@@ -146,8 +145,8 @@ public class GeneralSearchProblem {
                 q.add(new Node(cg_i, cg_j, cg.state.remaining_passengers - passengers_dropped_off, cg.state.remaining_blackboxes, capacity, cg.state.rescued_passengers + passengers_dropped_off, "drop", cg, cg.state.observers, cg.state.retrieved_boxes, cg.state.depth + 1));
             }
         }
-    }
 
+    }
 
     public static String BFS(GridCell[][] grid, Node cg, int capacity, int totalPassengers) {
         Node pass_goal = null;
@@ -314,9 +313,7 @@ public class GeneralSearchProblem {
         }
     }
 
-
     public static void expand(GridCell[][] grid, Node cg, PriorityQueue q, int capacity, int method_type) {
-
 
         if (cg.operator == null) calculateNodeVal(cg, method_type);
         int cg_i = cg.state.i;
@@ -367,7 +364,6 @@ public class GeneralSearchProblem {
             }
         }
     }
-
 
     public static double assignA_star2(Node node) {
         return assignCost(node) + assignHeuristic2(node);

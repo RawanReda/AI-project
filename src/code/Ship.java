@@ -44,6 +44,7 @@ public class Ship extends GridCell implements Observer {
                          this.deaths ++;}
                     if(passengers==0){
                          this.wrecked = true;
+                         this.black_box=1;
                     }
 
                }
@@ -56,12 +57,13 @@ public class Ship extends GridCell implements Observer {
                     node.state.remaining_passengers--;
                     this.passengers--;
                     this.deaths++;
-                    if (passengers == 0) {
+                    if (this.passengers == 0) {
+                         this.black_box=1;
                          this.wrecked = true;
                     }
                }
                else if(wrecked){
-                    if(black_box < expiry_date){
+                    if(black_box <= expiry_date){
                          this.black_box++;
                          if(black_box==expiry_date) {
                               node.state.remaining_blackboxes--;
@@ -71,6 +73,7 @@ public class Ship extends GridCell implements Observer {
                }
                else if (passengers == 0) {
                     this.wrecked = true;
+                    this.black_box++;
                }
 
 
