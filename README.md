@@ -1,6 +1,6 @@
 # AI-project
 
-This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed and uninformed). 
+This project was part of course CSEN901 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed and uninformed) to solve the coast gaurd problem. 
 
 **Problem Description:** 
 
@@ -26,7 +26,7 @@ The state itself was represented as an inner class to the node. The state was cr
 - Depth (For convenience it was added as a parameter in the inner class State.) 
 - Cost (For convenience it was added as a parameter in the inner class State.) 
 
-The goal test method returns true when all the passengers are either dead or rescued and there are no remaining black boxes. 
+The **goal test** method returns true when all the passengers are either dead or rescued and there are no remaining black boxes. 
 
 **The Search Problem ADT:**
 <p align="center" width="100"  height="100">
@@ -47,6 +47,7 @@ The search algorithms check for redundant states by checking if this node was pr
 The search problem ADT included the implementation of the general search problem. The problem simply adds the initial state to a queue, and while this queue is not empty it keeps pulling nodes, expanding them using the operators of the problem if possible.
 
 **CoastGuard problem**
+
 <p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745456-503a3d2a-a00b-4663-a873-0c2f9e9d197e.png" width="500">
 </p>
@@ -108,8 +109,7 @@ In IDS, we make use of depth-first search which imposes a cut-off,l, on the maxi
 
 In general, When we expand a node, we also call the method ‘notifyObservers’ on the node we expand to notify all the ships(observers of the node) that an action was taken, and accordingly each ship will update important attributes such as the number of deaths, number of remaining passengers, black box expiration date if the ship becomes a wreck. In addition, attributes in the node such as total remaining passengers, the total number of deaths, and the total number of boxes retrieved (in case the action was ‘retrieve’) are also updated.
 
-—-----------------------------------------------------------------------------------------------------------------------------------------
-
+<hr>
 **expand method works as follows:**
 
 `public static void expand(GridCell[][] grid,Node cg,Queue q, int capacity){`
@@ -122,7 +122,7 @@ If the cell on which the node is currently is a ship, we check if the ship is wr
 
 If the cell on which the node is currently is a station, we check if the node is carrying any passengers. If true, a new node is created with the operator ‘drop’ and added to the queue. 
 
-—-----------------------------------------------------------------------------------------------------------------------------------------
+<hr>
 
 For UC, GR1, GR2, AS1, and AS2, we use expand_IS
 
