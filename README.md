@@ -1,6 +1,6 @@
 # AI-project
 
-This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed an d uninformed). 
+This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed and uninformed). 
 
 **Problem Description:** 
 
