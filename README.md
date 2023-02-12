@@ -1,6 +1,6 @@
 # AI-project
 
-This project was part of the course CSEN701 (Artificial Intelligence) where we implemented our knowledge of search strategies algorithms. 
+This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms. 
 
 **Problem Description:** 
 
@@ -13,8 +13,9 @@ To aid in representing the problem, we use a 2D array of objects GridCell which 
 
 
 **The search-tree node ADT**
-
+<p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745438-a6a2d4c9-0728-430f-bbc6-4444f24cd92e.png" width="500">
+</p>
 
 The search-tree node ADT was implemented as a class that includes the following parameters:
 - Parent node 
@@ -32,8 +33,9 @@ The goal test method returns true when all the passengers are either dead or res
 
 
 **The Search Problem ADT:**
+<p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745444-864ac99f-7be9-4dc0-88b6-d2506c9afbfa.png" width="500">
-
+</p>
 The search problem ADT included the implementation of the general search problem. Depending on the search strategy that was provided as input in the solve method in the CoastGaurd class, a specific method is called. There are two main expansion methods: one is for informed search (expand_IS) and the other is for uninformed search (expand). Both of these will be explained in the main functions section. 
 
 BF, DF, and ID make use of expand method, while GR1, GR2, AS1, and AS2 make use of the expand_IS method. 
@@ -49,8 +51,9 @@ The search algorithms check for redundant states by checking if this node was pr
 The search problem ADT included the implementation of the general search problem. The problem simply adds the initial state to a queue, and while this queue is not empty it keeps pulling nodes, expanding them using the operators of the problem if possible.
 
 **CoastGuard problem**
+<p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745456-503a3d2a-a00b-4663-a873-0c2f9e9d197e.png" width="500">
-
+</p>
 In the CoastGaurd class, we have several attributes: 
 - cg_i and cg_j are the positions of the coast guard in the grid.
 - capacity is the max. number of passengers a coast guard can carry
@@ -63,9 +66,9 @@ In the CoastGaurd class, we have several attributes:
 
 
 CoastGuard implements GridSearchProblem class. 
-
+<p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745485-f2b020ca-f396-4592-9473-7abf1f9e94ec.png" width="700">
-
+</p>
 
 **The main functions implemented**
 
