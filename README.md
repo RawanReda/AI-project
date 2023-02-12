@@ -1,6 +1,6 @@
 # AI-project
 
-This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms. 
+This project was part of course CSEN701 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed an d uninformed). 
 
 **Problem Description:** 
 
@@ -66,7 +66,7 @@ CoastGuard implements GridSearchProblem class.
 <img src="https://user-images.githubusercontent.com/51987270/206745485-f2b020ca-f396-4592-9473-7abf1f9e94ec.png" width="700">
 </p>
 
-**The main functions implemented**
+**Main functions implemented**
 
 To find the path that leads to a goal state, we first call the method solve in CoastGuard class. 
 
@@ -80,7 +80,7 @@ Each ship is an observer and will be added to the list of observers through the 
 
 Depending on the string input strategy provided, a certain method is called in the GeneralSearchProblem class to implement the search algorithm. 
 
-**The various search algorithms**
+**Search algorithms implemented:**
 
 We have two types of search algorithms: Uninformed and Informed search.
 
