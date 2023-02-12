@@ -3,7 +3,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,10 +29,10 @@ public class CoastGuardPublic {
 
 	@Test(timeout = 100000)
 	public void testa0() throws Exception {
-		String solution = CoastGuard.solve(grid10, "ID", true);
+		String solution = CoastGuard.solve(grid9, "ID", true);
 		solution = solution.replace(" ", "");
 		System.out.println(solution);
-		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid10, solution));
+		assertTrue("The output actions do not lead to a goal state.", applyPlan(grid9, solution));
 	}
 	
 	@Test(timeout = 10000)

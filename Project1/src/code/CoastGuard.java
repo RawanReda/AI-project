@@ -1,6 +1,5 @@
 package code;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class CoastGuard extends GeneralSearchProblem {
