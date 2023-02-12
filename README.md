@@ -183,7 +183,7 @@ In project 2, we remove a couple of restrictions:
 
 
 ## To test project 1: 
-- open the CoastGaurd file. 
+- open the CoastGaurd file inside Project/src/code directory.  
 - In the main method, you can create your grid and pass it as a parameter to solve method. 
 ```
 String grid = "6,6;74;1,1;0,3,1,0,2,0,2,4,4,0,4,2,5,0;0,0,78,3,3,5,4,3,40;";
@@ -191,7 +191,7 @@ CoastGuard.solve(grid, "ID", true);
 ```
 
 ## To test project 2: 
-Given the knowlegde base file (KB), you can type 'query(S)' to output the sequence of actions needed to achieve the goal of rescuing all passengers and dropping them at the station.
+Given the knowlegde base file (KB), you can type 'goal(S)' to output the sequence of actions needed to achieve the goal of rescuing all passengers and dropping them at the station.
 
 
 
