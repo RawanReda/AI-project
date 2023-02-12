@@ -28,12 +28,8 @@ The state itself was represented as an inner class to the node. The state was cr
 
 The goal test method returns true when all the passengers are either dead or rescued and there are no remaining black boxes. 
 
-
-
-
-
 **The Search Problem ADT:**
-<p align="center">
+<p align="center" width="100"  height="100">
 <img src="https://user-images.githubusercontent.com/51987270/206745444-864ac99f-7be9-4dc0-88b6-d2506c9afbfa.png" width="500">
 </p>
 The search problem ADT included the implementation of the general search problem. Depending on the search strategy that was provided as input in the solve method in the CoastGaurd class, a specific method is called. There are two main expansion methods: one is for informed search (expand_IS) and the other is for uninformed search (expand). Both of these will be explained in the main functions section. 
@@ -54,6 +50,7 @@ The search problem ADT included the implementation of the general search problem
 <p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745456-503a3d2a-a00b-4663-a873-0c2f9e9d197e.png" width="500">
 </p>
+
 In the CoastGaurd class, we have several attributes: 
 - cg_i and cg_j are the positions of the coast guard in the grid.
 - capacity is the max. number of passengers a coast guard can carry
@@ -63,9 +60,8 @@ In the CoastGaurd class, we have several attributes:
 - grid array attribute is the result of parsing the String grid in the solve method and genGrid method. 
 
 
-
-
 CoastGuard implements GridSearchProblem class. 
+
 <p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745485-f2b020ca-f396-4592-9473-7abf1f9e94ec.png" width="700">
 </p>
@@ -83,7 +79,6 @@ A 2D grid of type GridCell is constructed from the string input parameter, grid.
 Each ship is an observer and will be added to the list of observers through the addObserver method. The initial node is created, containing the state with the observers, and is passed to a search method. 
 
 Depending on the string input strategy provided, a certain method is called in the GeneralSearchProblem class to implement the search algorithm. 
-
 
 **The various search algorithms**
 
@@ -112,7 +107,9 @@ In DFS, we expand as far as possible along each branch before backtracking. It u
 In IDS, we make use of depth-first search which imposes a cut-off,l, on the maximum depth of a path, and we try all depths,l, starting from 0. 
 
 In general, When we expand a node, we also call the method ‘notifyObservers’ on the node we expand to notify all the ships(observers of the node) that an action was taken, and accordingly each ship will update important attributes such as the number of deaths, number of remaining passengers, black box expiration date if the ship becomes a wreck. In addition, attributes in the node such as total remaining passengers, the total number of deaths, and the total number of boxes retrieved (in case the action was ‘retrieve’) are also updated.
+
 —-----------------------------------------------------------------------------------------------------------------------------------------
+
 **expand method works as follows:**
 
 `public static void expand(GridCell[][] grid,Node cg,Queue q, int capacity){`
@@ -125,9 +122,7 @@ If the cell on which the node is currently is a ship, we check if the ship is wr
 
 If the cell on which the node is currently is a station, we check if the node is carrying any passengers. If true, a new node is created with the operator ‘drop’ and added to the queue. 
 
-
 —-----------------------------------------------------------------------------------------------------------------------------------------
-
 
 For UC, GR1, GR2, AS1, and AS2, we use expand_IS
 
@@ -173,7 +168,7 @@ AS2 method assigns the summation of the heuristic 2 value and cost value of the 
 
 This is exactly the same as expand, but with an additional parameter ‘strategy’, which helps us in determining which function to use to assign a value to the node. Before adding a node to the queue, we assign its value by calling the method ‘calculateNodeVal’ which takes as input the node and a key that maps to a search strategy. 
 
-If the key is 0, the node value is assigned the cost. If 1, the node value is assigned the value of heuristic1. If 2, the node value is assigned the value of heuristic2.  If 3, the node value is assigned the value of A*1. If 4, the node value is assigned the value of A*2.
+If the key is 0, the node value is assigned the cost. If 1, the node value is assigned the value of heuristic1. If 2, the node value is assigned the value of heuristic2.  If 3, the node value is assigned the value of A\*1. If 4, the node value is assigned the value of A*2.
 
 
 
