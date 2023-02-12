@@ -1,6 +1,6 @@
 # AI-project
 
-This project was part of course CSEN901 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategy algorithms (both informed and uninformed) to solve the coast gaurd problem. There are variations of this project. Project 1 was implemented using Java and Project ( which is a simplified version of project 1) was implemented using Prolog. 
+This project was part of course CSEN901 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategy algorithms (both informed and uninformed) to solve the coast gaurd problem. There are variations of this project. Project 1 was implemented using Java and Project 2( which is a simplified version of project 1) was implemented using Prolog. 
 
 ## Project 1
 
