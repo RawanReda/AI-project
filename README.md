@@ -19,7 +19,7 @@ To aid in representing the problem, we use a 2D array of objects GridCell which 
 
 The search-tree node ADT was implemented as a class that includes the following parameters:
 - Parent node 
-- Operator applied to generate this node 
+- Operator applied to generate this node (up, down, left, right, pickup, drop, retrieve)
 - State
 
 The state itself was represented as an inner class to the node. The state was created to include information about the current state of the node with reference to the coast guard problem. In other words, the state included the location of the coast guard in that state, the total number of remaining passengers and black coxes left for the coast guard to save or retrieve, the current remaining capacity of the coast guard, and a hashmap containing the observers (the ships). The observer design pattern was used, the ships are the observers, observing the coast guard (observable) where with every action the coast guard performs, the ships observe the action and act accordingly to remove one passenger or add an additional damage point to the black box. Furthermore, the state includes the depth of the node. 
@@ -110,6 +110,7 @@ In IDS, we make use of depth-first search which imposes a cut-off,l, on the maxi
 In general, When we expand a node, we also call the method ‘notifyObservers’ on the node we expand to notify all the ships(observers of the node) that an action was taken, and accordingly each ship will update important attributes such as the number of deaths, number of remaining passengers, black box expiration date if the ship becomes a wreck. In addition, attributes in the node such as total remaining passengers, the total number of deaths, and the total number of boxes retrieved (in case the action was ‘retrieve’) are also updated.
 
 <hr>
+
 **expand method works as follows:**
 
 `public static void expand(GridCell[][] grid,Node cg,Queue q, int capacity){`
@@ -124,7 +125,7 @@ If the cell on which the node is currently is a station, we check if the node is
 
 <hr>
 
-For UC, GR1, GR2, AS1, and AS2, we use expand_IS
+For UC, GR1, GR2, AS1, and AS2, we use expand_IS method
 
 In these 5 search strategies, we use PriorityQueue data structure to sort the node based on their assigned value( different values are assigned depending on the search strategy used). 
 
