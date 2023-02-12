@@ -1,10 +1,12 @@
 # AI-project
 
-This project was part of course CSEN901 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategies algorithms (both informed and uninformed) to solve the coast gaurd problem. 
+This project was part of course CSEN901 (Introduction to Artificial Intelligence) where we implemented our knowledge of search strategy algorithms (both informed and uninformed) to solve the coast gaurd problem. There are variations of this project. Project 1 was implemented using Java and Project ( which is a simplified version of project 1) was implemented using Prolog. 
+
+## Project 1
 
 **Problem Description:** 
 
-Passengers on sinking ships are drowning. Each ship also has a black box that can be retrieved within a certain period after the ship becomes a wreck. Our coast guard is in charge of rescuing as many passengers by picking passengers up from the ship before they die and dropping them at the station as possible and retrieving black boxes from wrecked ships. The coast guard is allowed to move in any 4 directions ( up, down, left, and right).  Our problem is to identify the best sequence of actions the coast guard can take to minimize the number of deaths and retrieve as many boxes. 
+Passengers on sinking ships are drowning. Each ship also has a black box that can be retrieved within a certain period after the ship becomes a wreck. Our coast guard is in charge of rescuing as many passengers by **picking passengers up** from the ship before they die and **dropping** them at the station as possible and **retrieving black boxes from wrecked ships**. The coast guard is allowed to move in any 4 directions ( up, down, left, and right).  Our problem is to identify the best sequence of actions the coast guard can take to minimize the number of deaths and retrieve as many boxes. 
 
 To aid in representing the problem, we use a 2D array of objects GridCell which is implemented as follows: 
 <p align="center">
@@ -147,8 +149,8 @@ The node with a smaller value is expanded first, and once all ships become wreck
 **AS1 Method:**
 assigns the summation of heuristic 1 value and cost value of the node to the node. 
 a_star1= h1 + cost; 
-GR2 Method:
 
+**GR2 Method:**
 For greedy 2, the following heuristic was used, where closestShip_CB is the closest ship to the coast guard and closestShip_passengers is the number of passengers in the closest ship. To get the values of closestShip_CB and cosestShip_passengers, the distance between the coast guard and every ship is calculated. The heuristic function is applied when the number of passengers on the closest ship is less than the number of steps the coast guard will take to reach the ship. 
 
 As the number of passengers in the closest ship increases, the heuristic value decreases, getting closer to zero, making it admissible. If all the ships become a wreck, the node is assigned a value of zero. 
@@ -171,6 +173,25 @@ This is exactly the same as expand, but with an additional parameter ‘strategy
 
 If the key is 0, the node value is assigned the cost. If 1, the node value is assigned the value of heuristic1. If 2, the node value is assigned the value of heuristic2.  If 3, the node value is assigned the value of A\*1. If 4, the node value is assigned the value of A*2.
 
+
+## Project 2
+In project 2, we remove a couple of restrictions: 
+- ships are not wrecked, and there are no black boxes to retrieve
+- only one passenger per ship 
+- only one station
+- coastgoard has a maximum carrying capacity of 2. 
+
+
+## To test project 1: 
+- open the CoastGaurd file. 
+- In the main method, you can create your grid and pass it as a parameter to solve method. 
+```
+String grid = "6,6;74;1,1;0,3,1,0,2,0,2,4,4,0,4,2,5,0;0,0,78,3,3,5,4,3,40;";
+CoastGuard.solve(grid, "ID", true);
+```
+
+## To test project 2: 
+Given the knowlegde base file (KB), you can type 'query(S)' to output the sequence of actions needed to achieve the goal of rescuing all passengers and dropping them at the station.
 
 
 
