@@ -1,12 +1,15 @@
 # AI-project
 
+This project was part of the course CSEN701 (Artificial Intelligence) where we implemented our knowledge of search strategies algorithms. 
+
 **Problem Description:** 
 
 Passengers on sinking ships are drowning. Each ship also has a black box that can be retrieved within a certain period after the ship becomes a wreck. Our coast guard is in charge of rescuing as many passengers by picking passengers up from the ship before they die and dropping them at the station as possible and retrieving black boxes from wrecked ships. The coast guard is allowed to move in any 4 directions ( up, down, left, and right).  Our problem is to identify the best sequence of actions the coast guard can take to minimize the number of deaths and retrieve as many boxes. 
 
 To aid in representing the problem, we use a 2D array of objects GridCell which is implemented as follows: 
+<p align="center">
 <img src="https://user-images.githubusercontent.com/51987270/206745429-45632e03-aad9-4445-b1b6-57412d4d898d.png" width="500">
-
+</p>
 
 
 **The search-tree node ADT**
